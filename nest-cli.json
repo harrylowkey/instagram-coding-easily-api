@@ -4,6 +4,10 @@
 	"compilerOptions": {
 		"assets": [
 			{
+				"include": "public/**/*",
+				"watchAssets": true
+			},
+			{
 				"include": "**/*.hbs",
 				"watchAssets": true
 			},
@@ -18,6 +22,10 @@
 			{
 				"include": "**/*.json",
 				"watchAssets": false
+			},
+			{
+				"include": "**/*.js",
+				"watchAssets": true
 			}
 		]
 	}

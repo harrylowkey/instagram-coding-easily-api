@@ -15,7 +15,8 @@
 		"incremental": true,
 		"lib": [
 			"ES2020",
-			"ESNext"
+			"ESNext",
+			"dom"
 		],
 		"resolveJsonModule": true,
 		"paths": {
