@@ -7,6 +7,8 @@ import { env } from '~config/env.config';
 
 @Injectable()
 export class ImageBuilder {
+    #HOSTNAME: string = env.BACKEND_URL;
+    #PAGE_URL: string = '';
     #FONTS: string[] = [
         'Inconsolata.ttf',
         'NotoColorEmoji.ttf',
@@ -21,8 +23,8 @@ export class ImageBuilder {
     ];
     #DEFAULTS = {
         VIEWPORT: {
-            WIDTH: 1080,
-            HEIGHT: 1080,
+            WIDTH: 900,
+            HEIGHT: 900,
             DEVICE_SCALE_FACTOR: 1
         },
         INDEX_PAGE: 'preview.html'
@@ -32,9 +34,8 @@ export class ImageBuilder {
     #BACKGROUND_COLOR: any = 'radial-gradient(circle, rgba(63,94,251,1) 0%, rgba(252,70,107,1) 100%)';
     #BACKGROUND_PADDING: string | number = '5';
     #BACKGROUND_IMAGE: string = '';
-    #IS_SHOW_BACKGROUND: string | boolean = '';
-    #HOSTNAME: string = env.BACKEND_URL;
-    #PAGE_URL: string = '';
+    #IS_SHOW_BACKGROUND: string = 'true';
+    #LINE_NUMBERS: string = 'false';
 
     constructor(
         private response: Response,
@@ -120,17 +121,10 @@ export class ImageBuilder {
         return this;
     }
 
-    #generatePreviewUrl(
-        code: string,
-        theme: string,
-        language: string,
-        lineNumbers: boolean,
-        showBackground: boolean
-    ): void {
+    #generatePreviewUrl(code: string, theme: string, language: string): this {
         const queryParams = new URLSearchParams();
 
         const trimmedCodeSnippet: string = this.#trimLineEndings(code);
-        const isShowBackground = showBackground ? 'true' : 'false';
 
         theme && queryParams.set('theme', theme);
         language && queryParams.set('language', language);
@@ -139,19 +133,13 @@ export class ImageBuilder {
         queryParams.set('padding', this.#BACKGROUND_PADDING as string);
         queryParams.set('background-image', this.#BACKGROUND_IMAGE);
         queryParams.set('background-color', this.#BACKGROUND_COLOR);
-        queryParams.set('line-numbers', lineNumbers ? 'true' : 'false');
-        queryParams.set('show-background', isShowBackground);
+        queryParams.set('line-numbers', this.#LINE_NUMBERS);
+        queryParams.set('show-background', this.#IS_SHOW_BACKGROUND);
 
         const queryParamsString = queryParams.toString();
         this.#PAGE_URL = `${this.#HOSTNAME}/preview.html?${queryParamsString}`;
-        this.#IS_SHOW_BACKGROUND = isShowBackground;
-    }
 
-    #setResponse(image: Buffer | string | void): void {
-        this.response.status(200);
-        this.response.setHeader('Content-Type', 'image/png');
-        this.response.setHeader('Access-Control-Allow-Origin', '*');
-        this.response.send(image);
+        return this;
     }
 
     async #loadFonts(): Promise<void> {
@@ -190,13 +178,6 @@ export class ImageBuilder {
             return background;
         });
 
-        console.log({
-            deviceScaleFactor: this.#SCALE_FACTOR,
-            width: this.#WIDTH,
-            height: this.#DEFAULTS.VIEWPORT.HEIGHT,
-            isMobile: true
-        });
-
         await page.setViewport({
             deviceScaleFactor: this.#SCALE_FACTOR,
             width: this.#WIDTH,
@@ -207,8 +188,6 @@ export class ImageBuilder {
         const codeView = await page.$(this.#IS_SHOW_BACKGROUND ? '#container' : '#window');
         const image = (await codeView.screenshot()) as Buffer;
 
-        // this.#setResponse(image);
-
         await page.close();
         await browser.close();
 
@@ -216,23 +195,14 @@ export class ImageBuilder {
     }
 
     async generateImage(): Promise<Buffer> {
-        const {
-            code,
-            theme,
-            language,
-            lineNumbers,
-            showBackground,
-            customizeScale,
-            customizeWidth,
-            customizeBackgroundPadding
-        } = this.params;
+        const { code, theme, language, customizeScale, customizeWidth, customizeBackgroundPadding } = this.params;
 
         this.#validateLanguage(language)
             .#validateTheme(theme)
             .#setBackgroundPadding(customizeBackgroundPadding)
             .#setScaleFactor(customizeScale)
             .#setWidth(customizeWidth)
-            .#generatePreviewUrl(code, theme, language, lineNumbers, showBackground);
+            .#generatePreviewUrl(code, theme, language);
 
         await this.#loadFonts();
         return await this.#generatePreviewImage();

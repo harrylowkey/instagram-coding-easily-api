@@ -6,7 +6,7 @@ import { ApiTags } from '@nestjs/swagger';
 @Controller('posts')
 @ApiTags('Posts')
 export class PostController {
-    constructor(private readonly postService: PostService) { }
+    constructor(private readonly postService: PostService) {}
 
     @Get()
     generateImage(@Res() response: Response) {

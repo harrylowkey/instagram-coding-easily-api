@@ -90,9 +90,7 @@ export class PostService {
     async generateImage(response: Response) {
         const params = {
             theme: 'nord',
-            language: 'typescript',
-            lineNumbers: false,
-            showBackground: true
+            language: 'typescript'
         };
 
         const codes = [this.getBadCode(), this.getGoodCode()];
