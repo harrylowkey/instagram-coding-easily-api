@@ -21,18 +21,18 @@ export class ImageBuilder {
     ];
     #DEFAULTS = {
         VIEWPORT: {
-            WIDTH: 1000,
-            HEIGHT: 1000,
-            DEVICE_SCALE_FACTOR: 2
+            WIDTH: 1080,
+            HEIGHT: 1080,
+            DEVICE_SCALE_FACTOR: 1
         },
         INDEX_PAGE: 'preview.html'
     };
     #WIDTH: number = this.#DEFAULTS.VIEWPORT.WIDTH;
     #SCALE_FACTOR: number = this.#DEFAULTS.VIEWPORT.DEVICE_SCALE_FACTOR;
-    #BACKGROUND_PADDING: any = '';
-    #BACKGROUND_COLOR: any = '';
-    #BACKGROUND_IMAGE: any = '';
-    #IS_SHOW_BACKGROUND: any = '';
+    #BACKGROUND_COLOR: any = 'radial-gradient(circle, rgba(63,94,251,1) 0%, rgba(252,70,107,1) 100%)';
+    #BACKGROUND_PADDING: string | number = '5';
+    #BACKGROUND_IMAGE: string = '';
+    #IS_SHOW_BACKGROUND: string | boolean = '';
     #HOSTNAME: string = env.BACKEND_URL;
     #PAGE_URL: string = '';
 
@@ -89,7 +89,7 @@ export class ImageBuilder {
 
     #setBackgroundPadding(customizeBackgroundPadding?: string): this {
         try {
-            const padding = parseInt(customizeBackgroundPadding || this.#BACKGROUND_PADDING);
+            const padding = parseInt(customizeBackgroundPadding || (this.#BACKGROUND_PADDING as string));
             this.#BACKGROUND_PADDING = Math.min(Math.max(0, padding), 10); // Make sure number is in range between 1-10
         } catch (error) {
             this.#BACKGROUND_PADDING = '';
@@ -136,7 +136,7 @@ export class ImageBuilder {
         language && queryParams.set('language', language);
 
         queryParams.set('code', trimmedCodeSnippet);
-        queryParams.set('padding', this.#BACKGROUND_PADDING);
+        queryParams.set('padding', this.#BACKGROUND_PADDING as string);
         queryParams.set('background-image', this.#BACKGROUND_IMAGE);
         queryParams.set('background-color', this.#BACKGROUND_COLOR);
         queryParams.set('line-numbers', lineNumbers ? 'true' : 'false');
@@ -163,7 +163,7 @@ export class ImageBuilder {
         );
     }
 
-    async #generatePreviewImage(): Promise<string | Buffer | void> {
+    async #generatePreviewImage(): Promise<Buffer> {
         console.log('🛠 ', 'Preview Page URL', this.#PAGE_URL);
         const browser = await chromium.puppeteer.launch({
             args: chromium.args,
@@ -190,23 +190,32 @@ export class ImageBuilder {
             return background;
         });
 
+        console.log({
+            deviceScaleFactor: this.#SCALE_FACTOR,
+            width: this.#WIDTH,
+            height: this.#DEFAULTS.VIEWPORT.HEIGHT,
+            isMobile: true
+        });
+
         await page.setViewport({
             deviceScaleFactor: this.#SCALE_FACTOR,
             width: this.#WIDTH,
             height: this.#DEFAULTS.VIEWPORT.HEIGHT,
-            isMobile: false
+            isMobile: true
         });
 
         const codeView = await page.$(this.#IS_SHOW_BACKGROUND ? '#container' : '#window');
-        const image = await codeView.screenshot();
+        const image = (await codeView.screenshot()) as Buffer;
 
-        this.#setResponse(image);
+        // this.#setResponse(image);
 
         await page.close();
         await browser.close();
+
+        return image;
     }
 
-    async generateImage(): Promise<void> {
+    async generateImage(): Promise<Buffer> {
         const {
             code,
             theme,
@@ -226,6 +235,6 @@ export class ImageBuilder {
             .#generatePreviewUrl(code, theme, language, lineNumbers, showBackground);
 
         await this.#loadFonts();
-        await this.#generatePreviewImage();
+        return await this.#generatePreviewImage();
     }
 }
