@@ -5,12 +5,16 @@ import { v4 as uuidv4 } from 'uuid';
 import { ImageBuilder } from '~code2image/services/image-builder.service';
 import { env } from '~config/env.config';
 import { InstagramGraphService } from '~instagram-graph/services/instagram-graph.service';
+import { StorageService } from '~storage/services/storage.service';
 
 @Injectable()
 export class PostService {
     #IMAGE_FOLDER = `${env.ROOT_PATH}/tmp`;
 
-    constructor(private graphFacebookService: InstagramGraphService) { }
+    constructor(
+        private instagramGraphService: InstagramGraphService,
+        private storageService: StorageService
+    ) { }
 
     getBadCode() {
         return `
@@ -90,6 +94,14 @@ export class PostService {
         return filePath;
     }
 
+    async uploadSimplePost(imageUrl: string, caption: string) {
+        return this.instagramGraphService.uploadSimplePost({ imageUrl, caption });
+    }
+
+    async uploadCarouselPost(imageUrls: string[], caption: string) {
+        return this.instagramGraphService.uploadCarouselPost({ imageUrls, caption });
+    }
+
     async generateImage(response: Response) {
         const params = {
             theme: 'nord',
@@ -101,20 +113,18 @@ export class PostService {
             codes.map((code) => new ImageBuilder(response, { ...params, code }).generateImage())
         );
 
-        const imagePaths = await Promise.all(images.map((image) => this.saveImage(image)));
+        const imagePaths = await Promise.all(images.map((image) => this.storageService.uploadFile(image)));
+        const imageUrls = await Promise.all(imagePaths.map((path) => this.storageService.generateUrl(path)));
 
-        return imagePaths;
-    }
+        const isSimplePost = imageUrls.length === 1;
 
-    async publishPost() {
-        const iamgeUrl =
-            'https://images.unsplash.com/photo-1712928247899-2932f4c7dea3?q=80&w=1742&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D';
+        if (isSimplePost) {
+            await this.uploadSimplePost(imageUrls[0], 'Bad Practice: Misusing Any Type');
+            console.log('Successfully uploaded simple post');
+            return;
+        }
 
-        const params = {
-            caption: 'Caption',
-            imageUrl: iamgeUrl
-        };
-
-        await this.graphFacebookService.uploadSimplePost(params);
+        await this.uploadCarouselPost(imageUrls, 'Good Practice: Using Proper Types');
+        console.log('Successfully uploaded carousel post');
     }
 }

@@ -152,7 +152,7 @@ export class ImageBuilder {
     }
 
     async #generatePreviewImage(): Promise<Buffer> {
-        console.log('🛠 ', 'Preview Page URL', this.#PAGE_URL);
+        // console.log('🛠 ', 'Preview Page URL', this.#PAGE_URL);
         const browser = await chromium.puppeteer.launch({
             args: chromium.args,
             defaultViewport: chromium.defaultViewport,

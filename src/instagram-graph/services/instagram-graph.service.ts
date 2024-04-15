@@ -8,6 +8,7 @@ import { CreateContainerType } from '~instagram-graph/types/create-container.typ
 import { ContainerType } from '~instagram-graph/types/container.type';
 import { MediaTypeEnum } from '~instagram-graph/enums/container-media-type.enum';
 import { UploadSimplePostType } from '~instagram-graph/types/upload-simple-post.type';
+import { UploadCarouselPostType } from '~instagram-graph/types/upload-carousel-post.type';
 
 @Injectable()
 export class InstagramGraphService extends HttpBaseService {
@@ -32,8 +33,8 @@ export class InstagramGraphService extends HttpBaseService {
         return this.#post('/media', { params: snakecase(params) });
     }
 
-    #createCarouselContainer(children: string[]): Promise<ContainerType> {
-        const params = { children: children.join('%'), mediaType: MediaTypeEnum.CAROUSEL };
+    #createCarouselContainer(children: string[], caption: string = ''): Promise<ContainerType> {
+        const params = { children: children.join(','), mediaType: MediaTypeEnum.CAROUSEL, caption };
         return this.#post('/media', { params: snakecase(params) });
     }
 
@@ -46,9 +47,12 @@ export class InstagramGraphService extends HttpBaseService {
         return this.#publishContainer(container.id);
     }
 
-    async uploadCarouselPost(params: UploadSimplePostType[]): Promise<ContainerType> {
-        const containers = await Promise.all(params.map((param) => this.#createContainer(param)));
-        const carouselContainer = await this.#createCarouselContainer(containers.map((container) => container.id));
+    async uploadCarouselPost(params: UploadCarouselPostType): Promise<ContainerType> {
+        const containers = await Promise.all(params.imageUrls.map((imageUrl) => this.#createContainer({ imageUrl })));
+        const carouselContainer = await this.#createCarouselContainer(
+            containers.map((container) => container.id),
+            params.caption
+        );
         return this.#publishContainer(carouselContainer.id);
     }
 }

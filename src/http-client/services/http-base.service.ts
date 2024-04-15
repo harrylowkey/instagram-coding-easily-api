@@ -36,9 +36,9 @@ export abstract class HttpBaseService {
         });
     }
 
-    public request(config: AxiosRequestConfig = {}) {
+    public async request(config: AxiosRequestConfig = {}) {
         try {
-            return firstValueFrom(
+            return await firstValueFrom(
                 this.httpClient.request(config).pipe(map((response) => camelcaseKeys(response.data, { deep: true })))
             );
         } catch (error) {

@@ -8,4 +8,4 @@ import { InstagramGraphService } from './services/instagram-graph.service';
     exports: [InstagramGraphService],
     controllers: []
 })
-export class InstagramGraphModule { }
+export class InstagramGraphModule {}
