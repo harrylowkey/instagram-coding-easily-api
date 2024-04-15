@@ -4,10 +4,13 @@ import fs from 'fs';
 import { v4 as uuidv4 } from 'uuid';
 import { ImageBuilder } from '~code2image/services/image-builder.service';
 import { env } from '~config/env.config';
+import { InstagramGraphService } from '~instagram-graph/services/instagram-graph.service';
 
 @Injectable()
 export class PostService {
     #IMAGE_FOLDER = `${env.ROOT_PATH}/tmp`;
+
+    constructor(private graphFacebookService: InstagramGraphService) { }
 
     getBadCode() {
         return `
@@ -101,5 +104,17 @@ export class PostService {
         const imagePaths = await Promise.all(images.map((image) => this.saveImage(image)));
 
         return imagePaths;
+    }
+
+    async publishPost() {
+        const iamgeUrl =
+            'https://images.unsplash.com/photo-1712928247899-2932f4c7dea3?q=80&w=1742&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D';
+
+        const params = {
+            caption: 'Caption',
+            imageUrl: iamgeUrl
+        };
+
+        await this.graphFacebookService.uploadSimplePost(params);
     }
 }

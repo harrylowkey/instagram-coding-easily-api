@@ -12,4 +12,9 @@ export class PostController {
     generateImage(@Res() response: Response) {
         return this.postService.generateImage(response);
     }
+
+    @Get('/upload-post')
+    uploadPost() {
+        return this.postService.publishPost();
+    }
 }

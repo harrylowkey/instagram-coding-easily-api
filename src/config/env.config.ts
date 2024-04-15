@@ -7,5 +7,8 @@ export const env = {
     ROOT_PATH: process.cwd(),
     FACEBOOK: {
         ACCESS_TOKEN: process.env.FACEBOOK_ACCESS_TOKEN
+    },
+    INSTAGRAM: {
+        ACCOUNT_ID: process.env.INSTAGRAM_ACCOUNT_ID
     }
 };

@@ -1,22 +1,18 @@
 import { HttpService } from '@nestjs/axios';
-import Axios, { AxiosRequestConfig } from 'axios';
 import camelcaseKeys from 'camelcase-keys';
 import { firstValueFrom, map } from 'rxjs';
+import axios, { AxiosRequestConfig } from 'axios';
 import { HttpClientException } from '~core/exceptions/http-client.exception';
 
 export abstract class HttpBaseService {
     protected readonly httpClient: HttpService;
 
     public constructor() {
-        this.httpClient = new HttpService(Axios.create());
+        this.httpClient = new HttpService(axios.create());
     }
 
     protected configBaseURL(url: string): void {
         this.httpClient.axiosRef.defaults.baseURL = url;
-    }
-
-    protected configParams(params: any): void {
-        this.httpClient.axiosRef.defaults.params = params;
     }
 
     protected configHeaders(headers: any): void {
@@ -26,15 +22,15 @@ export abstract class HttpBaseService {
     public get(url: string, config: AxiosRequestConfig = {}) {
         return this.request({
             ...config,
-            method: 'GET',
+            method: 'get',
             url
         });
     }
 
-    public post(url: string, data: any, config: AxiosRequestConfig = {}) {
+    public post(url: string, data?: any, config: AxiosRequestConfig = {}) {
         return this.request({
             ...config,
-            method: 'POST',
+            method: 'post',
             url,
             data
         });
@@ -46,6 +42,7 @@ export abstract class HttpBaseService {
                 this.httpClient.request(config).pipe(map((response) => camelcaseKeys(response.data, { deep: true })))
             );
         } catch (error) {
+            console.log('error', error);
             throw new HttpClientException(error);
         }
     }
