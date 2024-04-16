@@ -33,7 +33,7 @@
 		"camelcase-keys": "7.0.0",
 		"chrome-aws-lambda": "10.1.0",
 		"dotenv": "16.3.1",
-		"puppeteer": "^19.3.0",
+		"puppeteer": "22.6.5",
 		"reflect-metadata": "^0.2.0",
 		"rxjs": "^7.8.1",
 		"snakecase-keys": "8.0.0",

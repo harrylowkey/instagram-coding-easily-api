@@ -102,6 +102,19 @@ export class PostService {
         return this.instagramGraphService.uploadCarouselPost({ imageUrls, caption });
     }
 
+    async uploadPost(imageUrls: string[]) {
+        const isSimplePost = imageUrls.length === 1;
+
+        if (isSimplePost) {
+            await this.uploadSimplePost(imageUrls[0], 'Bad Practice: Misusing Any Type');
+            console.log('Successfully uploaded simple post');
+            return;
+        }
+
+        await this.uploadCarouselPost(imageUrls, 'Good Practice: Using Proper Types');
+        console.log('Successfully uploaded carousel post');
+    }
+
     async generateImage(response: Response) {
         const params = {
             theme: 'nord',
@@ -113,18 +126,7 @@ export class PostService {
             codes.map((code) => new ImageBuilder(response, { ...params, code }).generateImage())
         );
 
-        const imagePaths = await Promise.all(images.map((image) => this.storageService.uploadFile(image)));
-        const imageUrls = await Promise.all(imagePaths.map((path) => this.storageService.generateUrl(path)));
-
-        const isSimplePost = imageUrls.length === 1;
-
-        if (isSimplePost) {
-            await this.uploadSimplePost(imageUrls[0], 'Bad Practice: Misusing Any Type');
-            console.log('Successfully uploaded simple post');
-            return;
-        }
-
-        await this.uploadCarouselPost(imageUrls, 'Good Practice: Using Proper Types');
-        console.log('Successfully uploaded carousel post');
+        const imageUrls = await Promise.all(images.map((image) => this.storageService.uploadFile(image)));
+        await this.uploadPost(imageUrls);
     }
 }

@@ -12,8 +12,18 @@ export class StorageService {
         this.s3Client = new S3Client({ region: env.AWS.REGION });
     }
 
+    now() {
+        const currentDate = new Date();
+        return currentDate.toISOString().split('T')[0];
+    }
+
+    generateKey() {
+        const now = this.now();
+        return `images/${now}/${uuidv4()}.jpg`;
+    }
+
     async uploadFile(file: Buffer) {
-        const key = `images/${uuidv4()}.jpg`;
+        const key = this.generateKey();
 
         const uploadParams = {
             Bucket: env.AWS.BUCKET_NAME,
@@ -25,7 +35,7 @@ export class StorageService {
 
         try {
             await this.s3Client.send(uploadCommand);
-            return key;
+            return this.generateUrl(key);
         } catch (err) {
             console.log(err);
             throw new S3Exception();
