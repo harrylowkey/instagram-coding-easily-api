@@ -1,11 +1,8 @@
-import { Injectable } from '@nestjs/common';
-import { Response } from 'express';
 import chromium from 'chrome-aws-lambda';
 import { themes } from '~/code2image/constants/theme';
 import { languages } from '~/code2image/constants/languages';
 import { env } from '~config/env.config';
 
-@Injectable()
 export class ImageBuilder {
     #HOSTNAME: string = env.BACKEND_URL;
     #PAGE_URL: string = '';
@@ -37,18 +34,8 @@ export class ImageBuilder {
     #IS_SHOW_BACKGROUND: string = 'true';
     #LINE_NUMBERS: string = 'false';
 
-    constructor(
-        private response: Response,
-        private params: any
-    ) {
-        this.response = response;
+    constructor(private params: any) {
         this.params = params;
-    }
-
-    #sendErrorResponse(response: any, responseObject: any): void {
-        response.status(400);
-        response.setHeader('Access-Control-Allow-Origin', '*');
-        response.json(responseObject);
     }
 
     #trimLineEndings(text: string): string {
@@ -65,11 +52,7 @@ export class ImageBuilder {
     #validateLanguage(language: string): this {
         if (!language || languages.indexOf(language) === -1) {
             console.log('❌ ', !language ? 'Language not specified' : `Unknown language '${language}'`);
-            this.#sendErrorResponse(this.response, {
-                message: !language ? 'language missing: please specify a language' : `Unknown language '${language}'`,
-                availableLanguages: languages
-            });
-            return this;
+            throw new Error('Invalid language');
         }
 
         return this;
@@ -78,11 +61,7 @@ export class ImageBuilder {
     #validateTheme(theme: string): this {
         if (themes.indexOf(theme) === -1) {
             console.log('❌ ', `Unknown theme '${theme}'`);
-            this.#sendErrorResponse(this.response, {
-                message: `Unknown theme: '${theme}'`,
-                availableThemes: themes
-            });
-            return this;
+            throw new Error('Invalid theme');
         }
 
         return this;
@@ -166,7 +145,6 @@ export class ImageBuilder {
             waitUntil: 'networkidle2'
         });
 
-        // set window header background same as the body
         await page.evaluate(() => {
             let background = '';
             const codeContainer = document.getElementById('code-container');

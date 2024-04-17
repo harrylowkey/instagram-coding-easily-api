@@ -12,7 +12,6 @@ export const themes = [
     'duotone-light',
     'duotone-sea',
     'duotone-space',
-    'ghcolors',
     'hopscotch',
     'material-dark',
     'material-light',

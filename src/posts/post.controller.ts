@@ -1,15 +1,14 @@
-import { Controller, Get, Res } from '@nestjs/common';
-import { Response } from 'express';
-import { PostService } from './post.service';
+import { Controller, Get } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
+import { PostBuilderService } from './services/post-builder.service';
 
 @Controller('posts')
 @ApiTags('Posts')
 export class PostController {
-    constructor(private readonly postService: PostService) {}
+    constructor(private postBuilderService: PostBuilderService) {}
 
     @Get()
-    generateImage(@Res() response: Response) {
-        return this.postService.generateImage(response);
+    generateImage() {
+        return this.postBuilderService.generate();
     }
 }

@@ -42,7 +42,7 @@ export class InstagramGraphService extends HttpBaseService {
         return this.#post('/media_publish', { params: snakecase({ creationId: containerId }) });
     }
 
-    async uploadSimplePost(params: UploadSimplePostType) {
+    async uploadSimplePost(params: UploadSimplePostType): Promise<ContainerType> {
         const container = await this.#createContainer(params);
         return this.#publishContainer(container.id);
     }
