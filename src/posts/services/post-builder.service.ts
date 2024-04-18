@@ -2,22 +2,21 @@ import { InstagramGraphService } from '~instagram-graph/services/instagram-graph
 import { OpenAIService } from '~openapi/services/openapi.service';
 import { StorageService } from '~storage/services/storage.service';
 import { PostTopicEnum } from '~posts/enums/post-topic.enum';
-import { languages } from '~code2image/constants/languages';
 import { ChatCompletion, ChatCompletionMessageParam } from 'openai/resources';
-import { themes } from '~code2image/constants/theme';
-import { ImageBuilder } from '~code2image/services/image-builder.service';
 import { HASHTAGS } from '~posts/constants/hashtag.constant';
 import { Injectable } from '@nestjs/common';
 import { DesignPatternCategoryEnum } from '~posts/enums/design-pattern-category.enum';
 import { DESIGN_PATTERN_CATEGORIES } from '~posts/constants/design-pattern-category.constant';
 import { PostBuilderInterface } from '~posts/interfaces/post-builder.interface';
+import { Code2ImageService, LanguageEnum, ThemeEnum, GenerateImagePramType } from '@harrylowkey/code2image';
 
 @Injectable()
 export class PostBuilderService implements PostBuilderInterface {
     constructor(
         private openAIService: OpenAIService,
         private instagramGraphService: InstagramGraphService,
-        private storageService: StorageService
+        private storageService: StorageService,
+        private code2ImageService: Code2ImageService
     ) { }
 
     get promptInstruction(): string {
@@ -43,10 +42,11 @@ export class PostBuilderService implements PostBuilderInterface {
         return Object.values(PostTopicEnum)[randomIndex];
     }
 
-    #randomLanguage(topic: PostTopicEnum): string {
+    #randomLanguage(topic: PostTopicEnum): LanguageEnum {
         const frontendLanguages = ['vuejs', 'vue', 'reactjs', 'react', 'angularjs', 'angular'];
         const markupLanguages = ['html'];
         const stylingLanguages = ['css'];
+        const languages = Object.values(LanguageEnum);
 
         if ([PostTopicEnum.DESIGN_PATTERN, PostTopicEnum.MICROSERVICE].indexOf(topic)) {
             const backendLanguages = languages.filter(
@@ -62,7 +62,8 @@ export class PostBuilderService implements PostBuilderInterface {
         return languages[Math.floor(Math.random() * languages.length)];
     }
 
-    #randomTheme(): string {
+    #randomTheme(): ThemeEnum {
+        const themes = Object.values(ThemeEnum);
         return themes[Math.floor(Math.random() * themes.length)];
     }
 
@@ -119,20 +120,31 @@ ${hashtags.join(' ')}
 		`;
     }
 
-    async #generatePostMedias(language: string, chatCompletion: ChatCompletion) {
-        const params = {
+    #checkIfGenerateImagesFail(images: Buffer[] | undefined[]) {
+        const validImages = images.filter((image) => image != undefined);
+        if (!validImages.length) {
+            throw new Error('Generate image from code fail');
+        }
+    }
+
+    async #generatePostMedias(language: LanguageEnum, chatCompletion: ChatCompletion) {
+        const params: GenerateImagePramType = {
+            code: '',
             theme: this.#randomTheme(),
             language: language
         };
 
         const chatCompletionText = chatCompletion.choices[0].message.content;
         const codes = [chatCompletionText];
-        const images = await Promise.all(codes.map((code) => new ImageBuilder({ ...params, code }).generateImage()));
+        const images = await Promise.all(
+            codes.map((code) => this.code2ImageService.generateImage({ ...params, code }))
+        );
 
+        this.#checkIfGenerateImagesFail(images);
         return Promise.all(images.map((image) => this.storageService.uploadFile(image)));
     }
 
-    async #generatePost(topic: PostTopicEnum, language: string, chatCompletion: ChatCompletion) {
+    async #generatePost(topic: PostTopicEnum, language: LanguageEnum, chatCompletion: ChatCompletion) {
         const mediaUrls = await this.#generatePostMedias(language, chatCompletion);
         const caption = this.#generatePostCaption(topic, language);
 
@@ -140,8 +152,7 @@ ${hashtags.join(' ')}
     }
 
     async generate() {
-        // const topic = this.#randomTopic();
-        const topic = PostTopicEnum.BAD_AND_GOOD_CODE;
+        const topic = this.#randomTopic();
         const language = this.#randomLanguage(topic);
         if (!topic || !language) {
             return this.generate();
@@ -150,12 +161,6 @@ ${hashtags.join(' ')}
         const prompt = this.#generatePrompt(topic, language);
         const chatCompletion = await this.openAIService.createChat(prompt);
 
-        console.log({
-            topic,
-            language,
-            prompt,
-            chatCompletion: chatCompletion.choices[0].message.content
-        });
         await this.#generatePost(topic, language, chatCompletion);
     }
 }
