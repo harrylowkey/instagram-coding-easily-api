@@ -11,6 +11,9 @@ dependencies:
   '@aws-sdk/s3-request-presigner':
     specifier: 3.554.0
     version: 3.554.0
+  '@harrylowkey/code2image':
+    specifier: 0.0.19
+    version: 0.0.19(puppeteer-core@10.4.0)(typescript@5.4.5)
   '@nestjs/axios':
     specifier: 3.0.2
     version: 3.0.2(@nestjs/common@10.3.7)(axios@1.6.8)(rxjs@7.8.1)
@@ -45,11 +48,8 @@ dependencies:
     specifier: 16.3.1
     version: 16.3.1
   openai:
-    specifier: ^4.35.0
+    specifier: 4.35.0
     version: 4.35.0
-  puppeteer:
-    specifier: 22.6.5
-    version: 22.6.5(typescript@5.4.5)
   reflect-metadata:
     specifier: ^0.2.0
     version: 0.2.2
@@ -103,6 +103,12 @@ devDependencies:
   jest:
     specifier: ^29.5.0
     version: 29.7.0(@types/node@20.12.7)(ts-node@10.9.2)
+  mkdirp:
+    specifier: ^3.0.1
+    version: 3.0.1
+  ncp:
+    specifier: ^2.0.0
+    version: 2.0.0
   prettier:
     specifier: ^3.0.0
     version: 3.2.5
@@ -1220,6 +1226,19 @@ packages:
     resolution: {integrity: sha512-Ys+3g2TaW7gADOJzPt83SJtCDhMjndcDMFVQ/Tj9iA1BfJzFKD9mAUXT3OenpuPHbI6P/myECxRJrofUsDx/5g==}
     engines: {node: ^12.22.0 || ^14.17.0 || >=16.0.0}
     dev: true
+
+  /@harrylowkey/code2image@0.0.19(puppeteer-core@10.4.0)(typescript@5.4.5):
+    resolution: {integrity: sha512-CsQCHXUfy/lHLbgbdToUvWb4ZY7ymjh6ZzUdjgvnukhekQbHjO6R0f4x7cOilcxgqUtoIeXK/I8oJ6KA21FGyg==}
+    dependencies:
+      chrome-aws-lambda: 10.1.0(puppeteer-core@10.4.0)
+      puppeteer: 22.6.5(typescript@5.4.5)
+    transitivePeerDependencies:
+      - bufferutil
+      - puppeteer-core
+      - supports-color
+      - typescript
+      - utf-8-validate
+    dev: false
 
   /@humanwhocodes/config-array@0.11.14:
     resolution: {integrity: sha512-3T8LkOmg45BV5FICb15QQMsyUSWrQ8AygVfC7ZG32zOalnqrilm018ZVCw0eapXux8FtA33q8PSRSstjee3jSg==}
@@ -5493,6 +5512,12 @@ packages:
     dependencies:
       minimist: 1.2.8
 
+  /mkdirp@3.0.1:
+    resolution: {integrity: sha512-+NsyUUAZDmo6YVHzL/stxSu3t9YS1iljliy3BSDrXJ/dkn1KYdmtZODGGjLcc9XLgVVpH4KshHB8XmZgMhaBXg==}
+    engines: {node: '>=10'}
+    hasBin: true
+    dev: true
+
   /ms@2.0.0:
     resolution: {integrity: sha512-Tpp60P6IUJDTuOq/5Z8cdskzJujfwqfOTkrwIwj7IRISpnkJnT6SyJ4PCPnGMoFjC9ddhal5KVIYtAt97ix05A==}
 
@@ -5525,6 +5550,11 @@ packages:
 
   /natural-compare@1.4.0:
     resolution: {integrity: sha512-OWND8ei3VtNC9h7V60qff3SVobHr996CTwgxubgyQYEpg290h9J0buyECNNJexkFm5sOajh5G116RYA1c8ZMSw==}
+    dev: true
+
+  /ncp@2.0.0:
+    resolution: {integrity: sha512-zIdGUrPRFTUELUvr3Gmc7KZ2Sw/h1PiVM0Af/oHB6zgnV1ikqSfRk+TOufi79aHYCW3NiOXmr1BP5nWbzojLaA==}
+    hasBin: true
     dev: true
 
   /negotiator@0.6.3:
