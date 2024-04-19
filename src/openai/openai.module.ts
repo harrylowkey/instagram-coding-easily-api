@@ -1,5 +1,5 @@
 import { Global, Module } from '@nestjs/common';
-import { OpenAIService } from './services/openapi.service';
+import { OpenAIService } from './services/openai.service';
 
 @Global()
 @Module({
@@ -8,4 +8,4 @@ import { OpenAIService } from './services/openapi.service';
     exports: [OpenAIService],
     controllers: []
 })
-export class OpenAIModule {}
+export class OpenAIModule { }

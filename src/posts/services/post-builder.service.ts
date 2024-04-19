@@ -1,5 +1,5 @@
 import { InstagramGraphService } from '~instagram-graph/services/instagram-graph.service';
-import { OpenAIService } from '~openapi/services/openapi.service';
+import { OpenAIService } from '~openai/services/openai.service';
 import { StorageService } from '~storage/services/storage.service';
 import { PostTopicEnum } from '~posts/enums/post-topic.enum';
 import { ChatCompletion, ChatCompletionMessageParam } from 'openai/resources';
