@@ -1,10 +1,8 @@
 import OpenAI from 'openai';
-import { Injectable } from '@nestjs/common';
 import { env } from '~config/env.config';
 import { APIPromise } from 'openai/core';
 import { ChatCompletion, ChatCompletionMessageParam } from 'openai/resources';
 
-@Injectable()
 export class OpenAIService {
     private readonly openAI: OpenAI;
 

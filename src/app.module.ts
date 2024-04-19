@@ -6,6 +6,7 @@ import { StorageModule } from '~storage/storage.module';
 import { OpenAIModule } from '~openai/openai.module';
 import { code2ImageConfig } from '~config/code2image.config';
 import { serveStaticConfig } from '~config/serve-static.config';
+import { DiscordModule } from '~discord/discord.module';
 
 @Module({
     imports: [
@@ -15,7 +16,8 @@ import { serveStaticConfig } from '~config/serve-static.config';
         InstagramGraphModule,
         HttpClientModule,
         StorageModule,
-        OpenAIModule
+        OpenAIModule,
+        DiscordModule
     ],
     controllers: [],
     providers: []

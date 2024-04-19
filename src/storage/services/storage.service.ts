@@ -1,11 +1,9 @@
 import { S3Client, PutObjectCommand, GetObjectCommand } from '@aws-sdk/client-s3';
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
 import { v4 as uuidv4 } from 'uuid';
-import { Injectable } from '@nestjs/common';
 import { env } from '~config/env.config';
 import { S3Exception } from '~core/exceptions/s3.exception';
 
-@Injectable()
 export class StorageService {
     private readonly s3Client = new S3Client({});
     constructor() {

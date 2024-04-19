@@ -1,6 +1,5 @@
 import snakecase from 'snakecase-keys';
 
-import { Injectable } from '@nestjs/common';
 import { AxiosRequestConfig } from 'axios';
 import { env } from '~config/env.config';
 import { HttpBaseService } from '~http-client/services/http-base.service';
@@ -10,7 +9,6 @@ import { MediaTypeEnum } from '~instagram-graph/enums/container-media-type.enum'
 import { UploadSimplePostType } from '~instagram-graph/types/upload-simple-post.type';
 import { UploadCarouselPostType } from '~instagram-graph/types/upload-carousel-post.type';
 
-@Injectable()
 export class InstagramGraphService extends HttpBaseService {
     #DEFAULT_PARAMS = { access_token: env.FACEBOOK.ACCESS_TOKEN };
 
@@ -22,11 +20,6 @@ export class InstagramGraphService extends HttpBaseService {
     #post(url: string, config: AxiosRequestConfig = {}) {
         config.params = { ...this.#DEFAULT_PARAMS, ...config.params };
         return this.post(url, {}, config);
-    }
-
-    #get(url: string, config: AxiosRequestConfig = {}) {
-        config.params = { ...this.#DEFAULT_PARAMS, ...config.params };
-        return this.get(url, config);
     }
 
     #createContainer(params: CreateContainerType): Promise<ContainerType> {
