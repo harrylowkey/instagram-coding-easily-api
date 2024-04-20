@@ -41,10 +41,11 @@ export class DiscordClientService extends HttpBaseService {
             'available commands',
             commands.map((command: DiscordCommandType) => ({ id: command.id, name: command.name }))
         );
+
+        await this.#deleteGlobalCommand(commands.find((command) => command.name === 'test').id);
     }
 
-    async #deleteGlobalCommand(): Promise<void> {
-        const permissionCommandId = '1231251350130659368';
+    async #deleteGlobalCommand(permissionCommandId: string): Promise<void> {
         await this.delete(`/applications/${env.DISCORD.APP_ID}/commands/${permissionCommandId}`);
     }
 }

@@ -39,6 +39,11 @@ $ pnpm run start:prod
 ```
 
 commands:
+- generate-post:
+  - topic?
+  - language
+
+
 - create-post:
     ? Do you have image?
     - Yes:
@@ -49,6 +54,7 @@ commands:
         - code
         - caption
         - hashtags
+
 - verify-post:
     - accept
     - no:
