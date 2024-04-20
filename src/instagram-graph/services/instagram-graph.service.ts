@@ -12,7 +12,7 @@ import { UploadCarouselPostType } from '~instagram-graph/types/upload-carousel-p
 export class InstagramGraphService extends HttpBaseService {
     #DEFAULT_PARAMS = { access_token: env.FACEBOOK.ACCESS_TOKEN };
 
-    public constructor() {
+    constructor() {
         super();
         this.configBaseURL(`https://graph.facebook.com/v19.0/${env.INSTAGRAM.ACCOUNT_ID}`);
     }

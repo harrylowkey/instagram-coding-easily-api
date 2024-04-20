@@ -36,13 +36,22 @@ export abstract class HttpBaseService {
         });
     }
 
+    public put(url: string, data?: any, config: AxiosRequestConfig = {}) {
+        return this.request({
+            ...config,
+            method: 'put',
+            url,
+            data
+        });
+    }
+
     public async request(config: AxiosRequestConfig = {}) {
         try {
             return await firstValueFrom(
                 this.httpClient.request(config).pipe(map((response) => camelcaseKeys(response.data, { deep: true })))
             );
         } catch (error) {
-            console.log('error', error);
+            console.log(error);
             throw new HttpClientException(error);
         }
     }

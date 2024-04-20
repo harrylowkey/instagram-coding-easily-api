@@ -37,3 +37,21 @@ $ pnpm run start:dev
 # production mode
 $ pnpm run start:prod
 ```
+
+commands:
+- create-post:
+    ? Do you have image?
+    - Yes:
+        - imageUrl
+        - caption
+        - hashtags
+    - No:
+        - code
+        - caption
+        - hashtags
+- verify-post:
+    - accept
+    - no:
+        - auto generate new one?
+        - Yes:
+        - No:
