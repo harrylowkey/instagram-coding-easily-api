@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/naming-convention */
 import { env } from '~config/env.config';
 import { DiscordApplicationCommandTypeEnum } from '~discord/enums/discord-application-command-type.enum';
+import { DiscordApplicationCommandType } from '~discord/types/discord-application-command.type';
 import { DiscordCreateApplicationCommandType } from '~discord/types/discord-create-application-command.type';
 import { HttpBaseService } from '~http-client/services/http-base.service';
 import { DiscordCommandService } from './discord-command.service';
@@ -40,7 +41,7 @@ export class DiscordClientService extends HttpBaseService {
         const commands = await this.put(`/applications/${env.DISCORD.APP_ID}/commands`, this.#commands);
         console.log(
             'available commands',
-            commands.map((command: DiscordCreateApplicationCommandType) => ({ id: command.id, name: command.name }))
+            commands.map((command: DiscordApplicationCommandType) => ({ id: command.id, name: command.name }))
         );
     }
 

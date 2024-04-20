@@ -1,9 +1,7 @@
 import { LanguageEnum } from '@harrylowkey/code2image';
 import { DiscordApplicationCommandOptionTypeEnum } from '~discord/enums/discord-application-command-option-type.enum';
-import {
-    ApplicationCommandOptionChoiceType,
-    DiscordCreateApplicationCommandType
-} from '~discord/types/discord-create-application-command.type';
+import { ApplicationCommandOptionChoiceType } from '~discord/types/discord-application-command-option-choice.type';
+import { DiscordCreateApplicationCommandType } from '~discord/types/discord-create-application-command.type';
 import { PostTopicEnum } from '~posts/enums/post-topic.enum';
 
 export class DiscordCommandService {
