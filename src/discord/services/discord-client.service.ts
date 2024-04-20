@@ -25,41 +25,13 @@ export class DiscordClientService extends HttpBaseService {
             type: DiscordApplicationCommandTypeEnum.CHAT_INPUT
         };
 
-        const COMMAND = {
-            name: 'blep',
-            type: 1,
-            description: 'Send a random adorable animal photo',
-            options: [
-                {
-                    name: 'animal',
-                    description: 'The type of animal',
-                    type: 3,
-                    required: true,
-                    choices: [
-                        {
-                            name: 'Dog',
-                            value: 'animal_dog'
-                        },
-                        {
-                            name: 'Cat',
-                            value: 'animal_cat'
-                        },
-                        {
-                            name: 'Penguin',
-                            value: 'animal_penguin'
-                        }
-                    ]
-                },
-                {
-                    name: 'only_smol',
-                    description: 'Whether to show only baby animals',
-                    type: 5,
-                    required: false
-                }
-            ]
+        const GENERATE_POST_COMMAND = {
+            name: 'generate-post',
+            description: 'Generate Post command',
+            type: DiscordApplicationCommandTypeEnum.CHAT_INPUT
         };
 
-        return [TEST_COMMAND];
+        return [TEST_COMMAND, GENERATE_POST_COMMAND];
     }
 
     async #installGlobalCommands(): Promise<void> {

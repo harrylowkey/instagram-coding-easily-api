@@ -1,4 +1,4 @@
 export interface PostBuilderInterface {
-    upload(imageUrls: string[], caption: string): Promise<void>;
-    generate(): Promise<void>;
+    upload(imageUrls: string[], caption: string): Promise<string>;
+    generate(): Promise<string>;
 }

@@ -28,12 +28,11 @@ export class PostBuilderService implements PostBuilderInterface {
 
         if (isSimplePost) {
             await this.instagramGraphService.uploadSimplePost({ imageUrl: imageUrls[0], caption });
-            console.log('Successfully uploaded simple post');
-            return;
+            return 'Successfully uploaded simple post';
         }
 
         await this.instagramGraphService.uploadCarouselPost({ imageUrls, caption });
-        console.log('Successfully uploaded carousel post');
+        return 'Successfully uploaded carousel post';
     }
 
     #randomTopic(): PostTopicEnum {
@@ -148,7 +147,7 @@ ${hashtags.join(' ')}
         const mediaUrls = await this.#generatePostMedias(language, chatCompletion);
         const caption = this.#generatePostCaption(topic, language);
 
-        await this.upload(mediaUrls, caption);
+        return await this.upload(mediaUrls, caption);
     }
 
     async generate() {
@@ -161,6 +160,6 @@ ${hashtags.join(' ')}
         const prompt = this.#generatePrompt(topic, language);
         const chatCompletion = await this.openAIService.createChat(prompt);
 
-        await this.#generatePost(topic, language, chatCompletion);
+        return this.#generatePost(topic, language, chatCompletion);
     }
 }
