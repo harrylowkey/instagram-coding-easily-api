@@ -7,7 +7,7 @@ import { PostBuilderService } from '~posts/services/post-builder.service';
 @Injectable()
 export class DiscordService {
     constructor(private postBuilderService: PostBuilderService) { }
-    handleDiscordBotInteraction(dto: DiscordInteractionDto, res: Response) {
+    async handleDiscordBotInteraction(dto: DiscordInteractionDto, res: Response) {
         const { type, data } = dto;
 
         if (type === InteractionType.PING) {
@@ -23,7 +23,8 @@ export class DiscordService {
             }
 
             if (data.name === 'generate-post') {
-                const response = this.postBuilderService.generate();
+                const response = await this.postBuilderService.generate();
+                console.log(response);
 
                 return res.send({
                     type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,

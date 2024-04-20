@@ -147,7 +147,7 @@ ${hashtags.join(' ')}
         const mediaUrls = await this.#generatePostMedias(language, chatCompletion);
         const caption = this.#generatePostCaption(topic, language);
 
-        return await this.upload(mediaUrls, caption);
+        return this.upload(mediaUrls, caption);
     }
 
     async generate() {
