@@ -11,6 +11,7 @@ export class DiscordService {
     constructor(private postBuilderService: PostBuilderService) { }
 
     #handleApplicationCommandInteraction(data: any, res: Response): Response {
+        console.log({ data });
         const { name: commandName } = data;
 
         switch (commandName) {

@@ -1,6 +1,7 @@
+/* eslint-disable @typescript-eslint/naming-convention */
 import { env } from '~config/env.config';
 import { DiscordApplicationCommandTypeEnum } from '~discord/enums/discord-application-command-type.enum';
-import { DiscordCommandType } from '~discord/types/discord-command.type';
+import { DiscordCreateApplicationCommandType } from '~discord/types/discord-create-application-command.type';
 import { HttpBaseService } from '~http-client/services/http-base.service';
 import { DiscordCommandService } from './discord-command.service';
 
@@ -15,11 +16,11 @@ export class DiscordClientService extends HttpBaseService {
         });
     }
 
-    static async config() {
+    static async config(): Promise<void> {
         return await new DiscordClientService().#installGlobalCommands();
     }
 
-    get #commands(): DiscordCommandType[] {
+    get #commands(): DiscordCreateApplicationCommandType[] {
         const TEST_COMMAND = {
             name: 'test',
             description: 'Basic command',
@@ -39,10 +40,8 @@ export class DiscordClientService extends HttpBaseService {
         const commands = await this.put(`/applications/${env.DISCORD.APP_ID}/commands`, this.#commands);
         console.log(
             'available commands',
-            commands.map((command: DiscordCommandType) => ({ id: command.id, name: command.name }))
+            commands.map((command: DiscordCreateApplicationCommandType) => ({ id: command.id, name: command.name }))
         );
-
-        await this.#deleteGlobalCommand(commands.find((command) => command.name === 'test').id);
     }
 
     async #deleteGlobalCommand(permissionCommandId: string): Promise<void> {
