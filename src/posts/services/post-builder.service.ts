@@ -72,16 +72,12 @@ export class PostBuilderService implements PostBuilderInterface {
     }
 
     #generatePromptDessignPattern(language: string, topic: PostTopicEnum) {
-        if (topic != PostTopicEnum.DESIGN_PATTERN) {
-            return;
-        }
         const categoryKeys = Object.keys(DESIGN_PATTERN_CATEGORIES);
 
         const randomCategoryKey = categoryKeys[Math.floor(Math.random() * categoryKeys.length)];
         const randomCategoryValues = DESIGN_PATTERN_CATEGORIES[randomCategoryKey as DesignPatternCategoryEnum];
 
         const randomCategory = randomCategoryValues[Math.floor(Math.random() * randomCategoryValues.length)];
-
         const category = `${topic} - ${randomCategory} pattern`;
 
         return `Write the short sample ${this.#randomLevel()} code in ${language} about the topic ${category}. ${this.promptInstruction}`;
@@ -114,9 +110,7 @@ export class PostBuilderService implements PostBuilderInterface {
         const hashtags = [...pageHashtags, `#${topicHashtag}`, `#${language}`, ...HASHTAGS];
         const caption = `${topic} in ${language}`;
 
-        return `${caption} 
-${hashtags.join(' ')}
-		`;
+        return `${caption} \n${hashtags.join(' ')}`;
     }
 
     #checkIfGenerateImagesFail(images: Buffer[] | undefined[]) {
