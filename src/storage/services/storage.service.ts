@@ -10,17 +10,17 @@ export class StorageService {
         this.s3Client = new S3Client({ region: env.AWS.REGION });
     }
 
-    now() {
+    now(): string {
         const currentDate = new Date();
         return currentDate.toISOString().split('T')[0];
     }
 
-    generateKey() {
+    generateKey(): string {
         const now = this.now();
         return `images/${now}/${uuidv4()}.jpg`;
     }
 
-    async uploadFile(file: Buffer) {
+    async uploadFile(file: Buffer): Promise<string> {
         const key = this.generateKey();
 
         const uploadParams = {
@@ -40,7 +40,7 @@ export class StorageService {
         }
     }
 
-    async generateUrl(key: string) {
+    async generateUrl(key: string): Promise<string> {
         const params = {
             Bucket: env.AWS.BUCKET_NAME,
             Key: key,

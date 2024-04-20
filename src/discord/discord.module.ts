@@ -10,4 +10,4 @@ import { PostModule } from '~posts/post.module';
     exports: [DiscordService],
     controllers: [DiscordController]
 })
-export class DiscordModule { }
+export class DiscordModule {}

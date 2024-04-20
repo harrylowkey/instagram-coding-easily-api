@@ -9,4 +9,4 @@ import { OpenAIModule } from '~openai/openai.module';
     exports: [PostBuilderService],
     controllers: []
 })
-export class PostModule { }
+export class PostModule {}

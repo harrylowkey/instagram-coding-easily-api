@@ -6,6 +6,7 @@ import { NestExpressApplication } from '@nestjs/platform-express';
 import { AppModule } from '~app.module';
 import { env } from '~config/env.config';
 import { MAXIMUM_PAYLOAD_SIZE } from '~core/constants/app.constant';
+import { DiscordClientService } from '~discord/services/discord-client.service';
 
 export class Bootstrap {
     private app: NestExpressApplication;
@@ -26,6 +27,10 @@ export class Bootstrap {
 
         const document = SwaggerModule.createDocument(this.app, config);
         SwaggerModule.setup('api', this.app, document);
+    }
+
+    async setupDiscord(): Promise<void> {
+        await DiscordClientService.config();
     }
 
     async start(): Promise<void> {

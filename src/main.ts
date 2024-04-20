@@ -5,6 +5,7 @@ async function startApp(): Promise<void> {
     await bootstrap.initApp();
     bootstrap.buildSwagger();
     await bootstrap.start();
+    await bootstrap.setupDiscord();
 }
 
 startApp()

@@ -8,10 +8,10 @@ import { DiscordInteractionDto } from '../dto/discord-interaction.dto';
 @Controller('discords')
 @ApiTags('Discords')
 export class DiscordController {
-    constructor(private discordService: DiscordService) { }
+    constructor(private discordService: DiscordService) {}
 
     @Post('interactions')
-    handleDiscordBotInteraction(@Body() dto: DiscordInteractionDto, @Res() res: Response) {
+    handleDiscordBotInteraction(@Body() dto: DiscordInteractionDto, @Res() res: Response): Response {
         return this.discordService.handleDiscordBotInteraction(dto, res);
     }
 }

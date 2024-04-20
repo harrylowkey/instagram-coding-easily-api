@@ -17,13 +17,13 @@ export class PostBuilderService implements PostBuilderInterface {
         private instagramGraphService: InstagramGraphService,
         private storageService: StorageService,
         private code2ImageService: Code2ImageService
-    ) { }
+    ) {}
 
     get promptInstruction(): string {
         return 'Add the short description lesser or equal about 20 characters of the topic in the header. Not any comment or other text';
     }
 
-    async upload(imageUrls: string[], caption: string) {
+    async upload(imageUrls: string[], caption: string): Promise<string> {
         const isSimplePost = imageUrls.length === 1;
 
         if (isSimplePost) {
@@ -71,7 +71,7 @@ export class PostBuilderService implements PostBuilderInterface {
         return levels[Math.floor(Math.random() * levels.length)];
     }
 
-    #generatePromptDessignPattern(language: string, topic: PostTopicEnum) {
+    #generatePromptDessignPattern(language: string, topic: PostTopicEnum): string {
         const categoryKeys = Object.keys(DESIGN_PATTERN_CATEGORIES);
 
         const randomCategoryKey = categoryKeys[Math.floor(Math.random() * categoryKeys.length)];
@@ -104,7 +104,7 @@ export class PostBuilderService implements PostBuilderInterface {
         ];
     }
 
-    #generatePostCaption(topic: PostTopicEnum, language: string) {
+    #generatePostCaption(topic: PostTopicEnum, language: string): string {
         const pageHashtags = ['#codingeasily', '#coding_easily'];
         const topicHashtag = topic.length > 1 ? `${topic.split(' ').join('')}` : topic;
         const hashtags = [...pageHashtags, `#${topicHashtag}`, `#${language}`, ...HASHTAGS];
@@ -113,14 +113,14 @@ export class PostBuilderService implements PostBuilderInterface {
         return `${caption} \n${hashtags.join(' ')}`;
     }
 
-    #checkIfGenerateImagesFail(images: Buffer[] | undefined[]) {
+    #checkIfGenerateImagesFail(images: Buffer[] | undefined[]): void {
         const validImages = images.filter((image) => image != undefined);
         if (!validImages.length) {
             throw new Error('Generate image from code fail');
         }
     }
 
-    async #generatePostMedias(language: LanguageEnum, chatCompletion: ChatCompletion) {
+    async #generatePostMedias(language: LanguageEnum, chatCompletion: ChatCompletion): Promise<string[]> {
         const params: GenerateImagePramType = {
             code: '',
             theme: this.#randomTheme(),
@@ -137,14 +137,14 @@ export class PostBuilderService implements PostBuilderInterface {
         return Promise.all(images.map((image) => this.storageService.uploadFile(image)));
     }
 
-    async #generatePost(topic: PostTopicEnum, language: LanguageEnum, chatCompletion: ChatCompletion) {
+    async #generatePost(topic: PostTopicEnum, language: LanguageEnum, chatCompletion: ChatCompletion): Promise<string> {
         const mediaUrls = await this.#generatePostMedias(language, chatCompletion);
         const caption = this.#generatePostCaption(topic, language);
 
         return this.upload(mediaUrls, caption);
     }
 
-    async generate() {
+    async generate(): Promise<string> {
         const topic = this.#randomTopic();
         const language = this.#randomLanguage(topic);
         if (!topic || !language) {

@@ -45,6 +45,14 @@ export abstract class HttpBaseService {
         });
     }
 
+    public delete(url: string, config: AxiosRequestConfig = {}) {
+        return this.request({
+            ...config,
+            method: 'delete',
+            url
+        });
+    }
+
     public async request(config: AxiosRequestConfig = {}) {
         try {
             return await firstValueFrom(

@@ -6,8 +6,9 @@ import { PostBuilderService } from '~posts/services/post-builder.service';
 
 @Injectable()
 export class DiscordService {
-    constructor(private postBuilderService: PostBuilderService) { }
-    handleDiscordBotInteraction(dto: DiscordInteractionDto, res: Response) {
+    constructor(private postBuilderService: PostBuilderService) {}
+
+    handleDiscordBotInteraction(dto: DiscordInteractionDto, res: Response): Response {
         const { type, data } = dto;
 
         if (type === InteractionType.PING) {
@@ -18,7 +19,7 @@ export class DiscordService {
             if (data.name === 'test') {
                 return res.send({
                     type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
-                    data: { content: 'A wild message appeared' }
+                    data: { content: `Hello, I'm the instagram coding-easily bot!` }
                 });
             }
 
@@ -29,6 +30,10 @@ export class DiscordService {
                     type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
                     data: { content: 'Generating post...' }
                 });
+            }
+
+            if (data.name == 'create-post') {
+                console.log({ data: data.options });
             }
         }
     }

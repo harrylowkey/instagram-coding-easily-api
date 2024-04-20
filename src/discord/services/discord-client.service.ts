@@ -1,7 +1,8 @@
 import { env } from '~config/env.config';
-import { DiscordApplicationCommandTypeEnum } from '~discord/enumts/discord-application-command-type.enum';
+import { DiscordApplicationCommandTypeEnum } from '~discord/enums/discord-application-command-type.enum';
 import { DiscordCommandType } from '~discord/types/discord-command.type';
 import { HttpBaseService } from '~http-client/services/http-base.service';
+import { DiscordCommandService } from './discord-command.service';
 
 export class DiscordClientService extends HttpBaseService {
     constructor() {
@@ -27,14 +28,23 @@ export class DiscordClientService extends HttpBaseService {
 
         const GENERATE_POST_COMMAND = {
             name: 'generate-post',
-            description: 'Generate Post command',
+            description: 'Generate and upload post command',
             type: DiscordApplicationCommandTypeEnum.CHAT_INPUT
         };
 
-        return [TEST_COMMAND, GENERATE_POST_COMMAND];
+        return [TEST_COMMAND, GENERATE_POST_COMMAND, DiscordCommandService.createPostCommand()];
     }
 
     async #installGlobalCommands(): Promise<void> {
-        await this.put(`/applications/${env.DISCORD.APP_ID}/commands`, this.#commands);
+        const commands = await this.put(`/applications/${env.DISCORD.APP_ID}/commands`, this.#commands);
+        console.log(
+            'available commands',
+            commands.map((command: DiscordCommandType) => ({ id: command.id, name: command.name }))
+        );
+    }
+
+    async #deleteGlobalCommand(): Promise<void> {
+        const permissionCommandId = '1231251350130659368';
+        await this.delete(`/applications/${env.DISCORD.APP_ID}/commands/${permissionCommandId}`);
     }
 }
