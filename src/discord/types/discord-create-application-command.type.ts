@@ -1,4 +1,3 @@
-import { DiscordApplicationCommandOptionTypeEnum } from '~discord/enums/discord-application-command-option-type.enum';
 import { DiscordApplicationCommandTypeEnum } from '~discord/enums/discord-application-command-type.enum';
 import { ApplicationCommandOptionType } from './discord-application-command-option.type';
 

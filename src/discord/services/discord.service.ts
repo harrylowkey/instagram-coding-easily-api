@@ -5,12 +5,13 @@ import { DiscordInteractionDto } from '~discord/http/dto/discord-interaction.dto
 import { PostBuilderService } from '~posts/services/post-builder.service';
 import { GeneratePostCommandIntefactionHandlerCreator } from '~discord/application-command-interaction-handle-creators/generate-post-command-interaction-handler.creator';
 import { CreatePostCommandIntefactionHandlerCreator } from '~discord/application-command-interaction-handle-creators/create-post-command-interaction-handler.creator';
+import { DiscordApplicationCommandInteractionType } from '~discord/types/discord-application-command-interaction.type';
 
 @Injectable()
 export class DiscordService {
     constructor(private postBuilderService: PostBuilderService) { }
 
-    #handleApplicationCommandInteraction(data: any, res: Response): Response {
+    #handleApplicationCommandInteraction(data: DiscordApplicationCommandInteractionType, res: Response): Response {
         console.log({ data });
         const { name: commandName } = data;
 

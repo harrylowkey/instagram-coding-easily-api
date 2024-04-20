@@ -9,6 +9,7 @@ import { DesignPatternCategoryEnum } from '~posts/enums/design-pattern-category.
 import { DESIGN_PATTERN_CATEGORIES } from '~posts/constants/design-pattern-category.constant';
 import { PostBuilderInterface } from '~posts/interfaces/post-builder.interface';
 import { Code2ImageService, LanguageEnum, ThemeEnum, GenerateImagePramType } from '@harrylowkey/code2image';
+import { CreateInstagramPostType } from '~posts/types/create-instagram-post.type';
 
 @Injectable()
 export class PostBuilderService implements PostBuilderInterface {
@@ -17,7 +18,7 @@ export class PostBuilderService implements PostBuilderInterface {
         private instagramGraphService: InstagramGraphService,
         private storageService: StorageService,
         private code2ImageService: Code2ImageService
-    ) {}
+    ) { }
 
     get promptInstruction(): string {
         return 'Add the short description lesser or equal about 20 characters of the topic in the header. Not any comment or other text';
@@ -35,13 +36,13 @@ export class PostBuilderService implements PostBuilderInterface {
         return 'Successfully uploaded carousel post';
     }
 
-    #randomTopic(): PostTopicEnum {
+    randomTopic(): PostTopicEnum {
         const topicsLength = Object.keys(PostTopicEnum).length;
         const randomIndex = Math.floor(Math.random() * topicsLength);
         return Object.values(PostTopicEnum)[randomIndex];
     }
 
-    #randomLanguage(topic: PostTopicEnum): LanguageEnum {
+    randomLanguage(topic: PostTopicEnum): LanguageEnum {
         const frontendLanguages = ['vuejs', 'vue', 'reactjs', 'react', 'angularjs', 'angular'];
         const markupLanguages = ['html'];
         const stylingLanguages = ['css'];
@@ -137,23 +138,26 @@ export class PostBuilderService implements PostBuilderInterface {
         return Promise.all(images.map((image) => this.storageService.uploadFile(image)));
     }
 
-    async #generatePost(topic: PostTopicEnum, language: LanguageEnum, chatCompletion: ChatCompletion): Promise<string> {
-        const mediaUrls = await this.#generatePostMedias(language, chatCompletion);
-        const caption = this.#generatePostCaption(topic, language);
-
-        return this.upload(mediaUrls, caption);
-    }
-
-    async generate(): Promise<string> {
-        const topic = this.#randomTopic();
-        const language = this.#randomLanguage(topic);
-        if (!topic || !language) {
-            return this.generate();
-        }
-
+    async #generateMediaUrls(topic: PostTopicEnum, language: LanguageEnum): Promise<string[]> {
         const prompt = this.#generatePrompt(topic, language);
         const chatCompletion = await this.openAIService.createChat(prompt);
 
-        return this.#generatePost(topic, language, chatCompletion);
+        return this.#generatePostMedias(language, chatCompletion);
+    }
+
+    async create(params: CreateInstagramPostType = {}): Promise<string> {
+        const { topic: postTopic, language: postLanguage, caption: postCaption, mediaUrls: postMediaUrls } = params;
+
+        const topic = postTopic || this.randomTopic();
+        const language = postLanguage || this.randomLanguage(topic);
+
+        if (!topic || !language) {
+            return this.create(params);
+        }
+
+        const mediaUrls = postMediaUrls || (await this.#generateMediaUrls(topic, language));
+        const caption = postCaption || this.#generatePostCaption(topic, language);
+
+        return this.upload(mediaUrls, caption);
     }
 }

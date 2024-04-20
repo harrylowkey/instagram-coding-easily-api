@@ -21,15 +21,27 @@ export class DiscordCommandService {
             description: 'Create and upload post manually command',
             options: [
                 {
+                    name: 'image',
+                    description: 'Upload image',
+                    type: DiscordApplicationCommandOptionTypeEnum.ATTACHMENT,
+                    required: false
+                },
+                {
+                    name: 'caption',
+                    description: 'Write a caption',
+                    type: DiscordApplicationCommandOptionTypeEnum.STRING,
+                    required: false
+                },
+                {
                     name: 'topic',
-                    description: 'Select a topic',
+                    description: 'Select a topic (Skip if having images and caption)',
                     type: DiscordApplicationCommandOptionTypeEnum.STRING,
                     required: false,
                     choices: this.#createTopicChoices()
                 },
                 {
                     name: 'language',
-                    description: 'Select a language',
+                    description: 'Select a language (Skip if having images and caption)',
                     type: DiscordApplicationCommandOptionTypeEnum.STRING,
                     required: false,
                     choices: this.#createLanguageChoices()

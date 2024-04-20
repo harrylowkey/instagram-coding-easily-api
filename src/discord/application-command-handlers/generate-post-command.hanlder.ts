@@ -10,7 +10,7 @@ export class GeneatePostCommandHandler implements ApplicationCommandInteractionH
     ) { }
 
     handle(): Response {
-        this.postBuilderService.generate();
+        this.postBuilderService.create();
 
         return this.res.send({
             type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
