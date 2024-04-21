@@ -1,10 +1,10 @@
 import { PostBuilderService } from '~posts/services/post-builder.service';
 import { ApplicationCommandInteractionHandlerCreator } from './application-command-interaction-handler.creator';
 import { Response } from 'express';
-import { CreatePostCommandHandler } from '~discord/services/application-command-handlers/create-post-command.handler';
 import { DiscordInteractionDataType } from '~discord/types/discord-interaction-data.type';
+import { CreatePostWithImageCommandHandler } from '../application-command-handlers/create-post-with-image-command.handler';
 
-export class CreatePostCommandIntefactionHandlerCreator extends ApplicationCommandInteractionHandlerCreator {
+export class CreatePostWithImageCommandHandlerCreator extends ApplicationCommandInteractionHandlerCreator {
     public constructor(
         private postBuilderService: PostBuilderService,
         private data: DiscordInteractionDataType,
@@ -13,7 +13,7 @@ export class CreatePostCommandIntefactionHandlerCreator extends ApplicationComma
         super();
     }
 
-    init(): CreatePostCommandHandler {
-        return new CreatePostCommandHandler(this.postBuilderService, this.data, this.res);
+    init(): CreatePostWithImageCommandHandler {
+        return new CreatePostWithImageCommandHandler(this.postBuilderService, this.data, this.res);
     }
 }

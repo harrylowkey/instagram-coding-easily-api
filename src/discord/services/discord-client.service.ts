@@ -1,6 +1,5 @@
 /* eslint-disable @typescript-eslint/naming-convention */
 import { env } from '~config/env.config';
-import { DiscordApplicationCommandTypeEnum } from '~discord/enums/discord-application-command-type.enum';
 import { DiscordApplicationCommandType } from '~discord/types/discord-application-command.type';
 import { DiscordCreateApplicationCommandType } from '~discord/types/discord-create-application-command.type';
 import { HttpBaseService } from '~http-client/services/http-base.service';
@@ -22,27 +21,18 @@ export class DiscordClientService extends HttpBaseService {
     }
 
     get #commands(): DiscordCreateApplicationCommandType[] {
-        const TEST_COMMAND = {
-            name: 'test',
-            description: 'Basic command',
-            type: DiscordApplicationCommandTypeEnum.CHAT_INPUT
-        };
-
-        const GENERATE_POST_COMMAND = {
-            name: 'generate-post',
-            description: 'Generate and upload post command',
-            type: DiscordApplicationCommandTypeEnum.CHAT_INPUT
-        };
-
-        return [TEST_COMMAND, GENERATE_POST_COMMAND, DiscordCommandService.createPostCommand()];
+        return [DiscordCommandService.createPostWithImageCommand(), DiscordCommandService.generatePostCommand()];
     }
 
     async #installGlobalCommands(): Promise<void> {
         const commands = await this.put(`/applications/${env.DISCORD.APP_ID}/commands`, this.#commands);
+
         console.log(
             'available commands',
             commands.map((command: DiscordApplicationCommandType) => ({ id: command.id, name: command.name }))
         );
+
+        // await this.#deleteGlobalCommand(commands.find(({ name }) => name === 'create-post-with-image').id);
     }
 
     async #deleteGlobalCommand(permissionCommandId: string): Promise<void> {

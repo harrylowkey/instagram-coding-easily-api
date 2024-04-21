@@ -10,15 +10,17 @@ import { UploadSimplePostType } from '~instagram-graph/types/upload-simple-post.
 import { UploadCarouselPostType } from '~instagram-graph/types/upload-carousel-post.type';
 
 export class InstagramGraphService extends HttpBaseService {
-    #DEFAULT_PARAMS = { access_token: env.FACEBOOK.ACCESS_TOKEN };
+    /* eslint-disable @typescript-eslint/naming-convention */
+    #accessTokenHeader = { access_token: env.FACEBOOK.ACCESS_TOKEN };
 
     constructor() {
         super();
         this.configBaseURL(`https://graph.facebook.com/v19.0/${env.INSTAGRAM.ACCOUNT_ID}`);
     }
 
+    /* eslint-disable @typescript-eslint/explicit-function-return-type */
     #post(url: string, config: AxiosRequestConfig = {}) {
-        config.params = { ...this.#DEFAULT_PARAMS, ...config.params };
+        config.params = { ...this.#accessTokenHeader, ...config.params };
         return this.post(url, {}, config);
     }
 

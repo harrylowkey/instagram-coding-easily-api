@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/explicit-function-return-type */
 import { HttpService } from '@nestjs/axios';
 import camelcaseKeys from 'camelcase-keys';
 import { firstValueFrom, map } from 'rxjs';
@@ -59,6 +60,7 @@ export abstract class HttpBaseService {
                 this.httpClient.request(config).pipe(map((response) => camelcaseKeys(response.data, { deep: true })))
             );
         } catch (error) {
+            // console.log(error.response?.data?.errors);
             console.log(error);
             throw new HttpClientException(error);
         }

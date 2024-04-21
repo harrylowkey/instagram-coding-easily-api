@@ -38,26 +38,20 @@ $ pnpm run start:dev
 $ pnpm run start:prod
 ```
 
-commands:
-- generate-post:
-  - topic?
-  - language
-
-
-- create-post:
-    ? Do you have image?
-    - Yes:
-        - imageUrl
-        - caption
-        - hashtags
-    - No:
-        - code
-        - caption
-        - hashtags
-
 - verify-post:
     - accept
     - no:
         - auto generate new one?
         - Yes:
         - No:
+
+- create-post-with-image
+    - image
+    - catpion
+- create-post-with-code
+    - code
+    - caption
+- generate-post:
+    - topic?
+    - language
+

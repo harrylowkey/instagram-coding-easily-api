@@ -2,8 +2,8 @@ import { Injectable, NotImplementedException } from '@nestjs/common';
 import { Response } from 'express';
 import { InteractionResponseType, InteractionType } from 'discord-interactions';
 import { PostBuilderService } from '~posts/services/post-builder.service';
-import { GeneratePostCommandIntefactionHandlerCreator } from '~discord/services/application-command-interaction-handle-creators/generate-post-command-interaction-handler.creator';
-import { CreatePostCommandIntefactionHandlerCreator } from '~discord/services/application-command-interaction-handle-creators/create-post-command-interaction-handler.creator';
+import { GeneratePostCommandHandlerCreator } from '~discord/services/application-command-interaction-handle-creators/generate-post-command-interaction-handler.creator';
+import { CreatePostWithImageCommandHandlerCreator } from '~discord/services/application-command-interaction-handle-creators/create-post-with-image-command-interaction-handler.creator';
 import { DiscordInteractionDataType } from '~discord/types/discord-interaction-data.type';
 import { DiscordInteractionType } from '~discord/types/discord-interaction.type';
 
@@ -15,10 +15,10 @@ export class DiscordService {
         const { name: commandName } = data;
 
         switch (commandName) {
-            case 'create-post':
-                return new CreatePostCommandIntefactionHandlerCreator(this.postBuilderService, data, res).handle();
+            case 'create-post-with-image':
+                return new CreatePostWithImageCommandHandlerCreator(this.postBuilderService, data, res).handle();
             case 'generate-post':
-                return new GeneratePostCommandIntefactionHandlerCreator(this.postBuilderService, res).handle();
+                return new GeneratePostCommandHandlerCreator(this.postBuilderService, data, res).handle();
         }
     }
 

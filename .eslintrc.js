@@ -9,7 +9,8 @@ module.exports = {
         'plugin:prettier/recommended',
         'plugin:@typescript-eslint/recommended',
         'plugin:jest-formatting/recommended',
-        'plugin:sonarjs/recommended'
+        'plugin:sonarjs/recommended',
+        "eslint:recommended"
     ],
     root: true,
     env: {
@@ -100,11 +101,16 @@ module.exports = {
         'prettier/prettier': [
             'error',
             {
-                useTabs: false,
-                tabWidth: 4,
-                printWidth: 120,
                 singleQuote: true,
-                trailingComma: 'none'
+                printWidth: 120,
+                proseWrap: "always",
+                tabWidth: 4,
+                useTabs: false,
+                trailingComma: "none",
+                bracketSpacing: true,
+                jsxBracketSameLine: false,
+                semi: true,
+                endOfLine: "auto"
             }
         ],
         'prefer-const': 'off',
