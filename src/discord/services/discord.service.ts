@@ -1,18 +1,17 @@
 import { Injectable, NotImplementedException } from '@nestjs/common';
 import { Response } from 'express';
 import { InteractionResponseType, InteractionType } from 'discord-interactions';
-import { DiscordInteractionDto } from '~discord/http/dto/discord-interaction.dto';
 import { PostBuilderService } from '~posts/services/post-builder.service';
-import { GeneratePostCommandIntefactionHandlerCreator } from '~discord/application-command-interaction-handle-creators/generate-post-command-interaction-handler.creator';
-import { CreatePostCommandIntefactionHandlerCreator } from '~discord/application-command-interaction-handle-creators/create-post-command-interaction-handler.creator';
-import { DiscordApplicationCommandInteractionType } from '~discord/types/discord-application-command-interaction.type';
+import { GeneratePostCommandIntefactionHandlerCreator } from '~discord/services/application-command-interaction-handle-creators/generate-post-command-interaction-handler.creator';
+import { CreatePostCommandIntefactionHandlerCreator } from '~discord/services/application-command-interaction-handle-creators/create-post-command-interaction-handler.creator';
+import { DiscordInteractionDataType } from '~discord/types/discord-interaction-data.type';
+import { DiscordInteractionType } from '~discord/types/discord-interaction.type';
 
 @Injectable()
 export class DiscordService {
-    constructor(private postBuilderService: PostBuilderService) { }
+    constructor(private postBuilderService: PostBuilderService) {}
 
-    #handleApplicationCommandInteraction(data: DiscordApplicationCommandInteractionType, res: Response): Response {
-        console.log({ data });
+    #handleApplicationCommandInteraction(data: DiscordInteractionDataType, res: Response): Response {
         const { name: commandName } = data;
 
         switch (commandName) {
@@ -23,7 +22,7 @@ export class DiscordService {
         }
     }
 
-    handleDiscordBotInteraction(dto: DiscordInteractionDto, res: Response): Response {
+    handleDiscordBotInteraction(dto: DiscordInteractionType, res: Response): Response {
         const { type, data } = dto;
 
         switch (type) {

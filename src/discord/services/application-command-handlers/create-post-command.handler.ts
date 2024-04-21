@@ -2,10 +2,8 @@ import { LanguageEnum } from '@harrylowkey/code2image';
 import { InteractionResponseType } from 'discord-interactions';
 import { Response } from 'express';
 import { ApplicationCommandInteractionHandlerInterface } from '~discord/interfaces/appplication-command-interaction-handler.interface';
-import {
-    ApplicationCommandInteractionOptionType,
-    DiscordApplicationCommandInteractionType
-} from '~discord/types/discord-application-command-interaction.type';
+import { ApplicationCommandInteractionOptionType } from '~discord/types/discord-application-command-interaction-option.type';
+import { DiscordInteractionDataType } from '~discord/types/discord-interaction-data.type';
 import { PostTopicEnum } from '~posts/enums/post-topic.enum';
 import { PostBuilderService } from '~posts/services/post-builder.service';
 import { CreateInstagramPostType } from '~posts/types/create-instagram-post.type';
@@ -13,9 +11,9 @@ import { CreateInstagramPostType } from '~posts/types/create-instagram-post.type
 export class CreatePostCommandHandler implements ApplicationCommandInteractionHandlerInterface {
     constructor(
         private postBuilderService: PostBuilderService,
-        private data: DiscordApplicationCommandInteractionType,
+        private data: DiscordInteractionDataType,
         private res: Response
-    ) { }
+    ) {}
 
     #getTopic(options?: ApplicationCommandInteractionOptionType[]): PostTopicEnum {
         return options?.find(({ name }) => name === 'topic')?.value as PostTopicEnum;

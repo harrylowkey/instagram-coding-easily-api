@@ -18,7 +18,7 @@ export class PostBuilderService implements PostBuilderInterface {
         private instagramGraphService: InstagramGraphService,
         private storageService: StorageService,
         private code2ImageService: Code2ImageService
-    ) { }
+    ) {}
 
     get promptInstruction(): string {
         return 'Add the short description lesser or equal about 20 characters of the topic in the header. Not any comment or other text';

@@ -7,7 +7,7 @@ export class GeneatePostCommandHandler implements ApplicationCommandInteractionH
     constructor(
         private postBuilderService: PostBuilderService,
         private res: Response
-    ) { }
+    ) {}
 
     handle(): Response {
         this.postBuilderService.create();
