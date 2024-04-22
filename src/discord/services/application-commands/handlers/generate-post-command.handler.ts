@@ -31,9 +31,7 @@ export class GeneratePostCommandHandler implements ApplicationCommandInteraction
         return { topic, language };
     }
 
-    #createPost(postTopic: PostTopicEnum, postLanguage: LanguageEnum): void {
-        const topic = postTopic || this.postService.randomTopic();
-        const language = postLanguage || this.postService.randomLanguage(topic);
+    #createPost(topic: PostTopicEnum, language: LanguageEnum): void {
         this.postService.create({ topic, language });
     }
 

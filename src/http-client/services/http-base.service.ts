@@ -54,7 +54,6 @@ export abstract class HttpBaseService {
         });
     }
 
-    // TODO: handle it
     // {
     //  message: 'The aspect ratio is not supported.',
     //  type: 'OAuthException',
