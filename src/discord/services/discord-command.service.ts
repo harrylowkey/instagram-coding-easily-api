@@ -7,12 +7,12 @@ import { DiscordCreateApplicationCommandType } from '~discord/types/discord-crea
 import { PostTopicEnum } from '~posts/enums/post-topic.enum';
 
 export class DiscordCommandService {
-    static #createTopicChoices(): ApplicationCommandOptionChoiceType[] {
+    static createTopicChoices(): ApplicationCommandOptionChoiceType[] {
         const topics = Object.values(PostTopicEnum);
         return topics.reduce((choices, topic) => [...choices, { name: topic, value: topic }], []);
     }
 
-    static #createLanguageChoices(): ApplicationCommandOptionChoiceType[] {
+    static createLanguageChoices(): ApplicationCommandOptionChoiceType[] {
         const languages = Object.values(LanguageEnum);
         return languages.reduce((choices, language) => [...choices, { name: language, value: language }], []);
     }
@@ -50,7 +50,7 @@ export class DiscordCommandService {
     static createPostWithCodeCommand(): DiscordCreateApplicationCommandType {
         return {
             name: 'create-post-with-code',
-            description: 'Add code and create post',
+            description: 'Add code to create post',
             type: DiscordApplicationCommandTypeEnum.CHAT_INPUT
         };
     }
@@ -65,14 +65,14 @@ export class DiscordCommandService {
                     description: 'Select a topic (Skip if having images and caption)',
                     type: DiscordApplicationCommandOptionTypeEnum.STRING,
                     required: false,
-                    choices: this.#createTopicChoices()
+                    choices: this.createTopicChoices()
                 },
                 {
                     name: 'language',
                     description: 'Select a language (Skip if having images and caption)',
                     type: DiscordApplicationCommandOptionTypeEnum.STRING,
                     required: false,
-                    choices: this.#createLanguageChoices()
+                    choices: this.createLanguageChoices()
                 }
             ]
         };

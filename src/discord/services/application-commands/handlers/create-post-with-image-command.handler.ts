@@ -1,16 +1,16 @@
 import { InteractionResponseType } from 'discord-interactions';
 import { Response } from 'express';
-import { ApplicationCommandInteractionHandlerInterface } from '~discord/interfaces/appplication-command-interaction-handler.interface';
+import { ApplicationCommandInteractionHandlerInterface } from '~discord/interfaces/application-command-interaction-handler.interface';
 import { ApplicationCommandInteractionOptionType } from '~discord/types/discord-application-command-interaction-option.type';
-import { DiscordInteractionDataType } from '~discord/types/discord-interaction-data.type';
+import { ApplicationCommandDataType } from '~discord/types/discord-application-command-data.type';
 import { DiscordResolvedDataType } from '~discord/types/discord-resolved-data.type';
-import { PostBuilderService } from '~posts/services/post-builder.service';
 import { CreateInstagramPostType } from '~posts/types/create-instagram-post.type';
+import { PostService } from '~posts/services/post.service';
 
 export class CreatePostWithImageCommandHandler implements ApplicationCommandInteractionHandlerInterface {
     constructor(
-        private postBuilderService: PostBuilderService,
-        private data: DiscordInteractionDataType,
+        private postService: PostService,
+        private data: ApplicationCommandDataType,
         private res: Response
     ) {}
 
@@ -33,10 +33,10 @@ export class CreatePostWithImageCommandHandler implements ApplicationCommandInte
     }
 
     #uploadPost(postMediaUrls: string[], postCaption: string): void {
-        this.postBuilderService.upload(postMediaUrls, postCaption);
+        this.postService.upload(postMediaUrls, postCaption);
     }
 
-    #response(): Response {
+    response(): Response {
         let content = 'Creating post...';
         return this.res.send({
             type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
@@ -49,6 +49,6 @@ export class CreatePostWithImageCommandHandler implements ApplicationCommandInte
         const { mediaUrls, caption } = params;
 
         this.#uploadPost(mediaUrls, caption);
-        return this.#response();
+        return this.response();
     }
 }

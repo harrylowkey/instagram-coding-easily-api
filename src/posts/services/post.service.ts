@@ -2,17 +2,17 @@ import { InstagramGraphService } from '~instagram-graph/services/instagram-graph
 import { OpenAIService } from '~openai/services/openai.service';
 import { StorageService } from '~storage/services/storage.service';
 import { PostTopicEnum } from '~posts/enums/post-topic.enum';
-import { ChatCompletion, ChatCompletionMessageParam } from 'openai/resources';
+import { ChatCompletionMessageParam } from 'openai/resources';
 import { HASHTAGS } from '~posts/constants/hashtag.constant';
 import { Injectable } from '@nestjs/common';
 import { DesignPatternCategoryEnum } from '~posts/enums/design-pattern-category.enum';
 import { DESIGN_PATTERN_CATEGORIES } from '~posts/constants/design-pattern-category.constant';
-import { PostBuilderInterface } from '~posts/interfaces/post-builder.interface';
+import { CreatePostInterface } from '~posts/interfaces/create-post.interface';
 import { Code2ImageService, LanguageEnum, ThemeEnum, GenerateImagePramType } from '@harrylowkey/code2image';
 import { CreateInstagramPostType } from '~posts/types/create-instagram-post.type';
 
 @Injectable()
-export class PostBuilderService implements PostBuilderInterface {
+export class PostService implements CreatePostInterface {
     constructor(
         private openAIService: OpenAIService,
         private instagramGraphService: InstagramGraphService,
@@ -121,15 +121,14 @@ export class PostBuilderService implements PostBuilderInterface {
         }
     }
 
-    async #generatePostMedias(language: LanguageEnum, chatCompletion: ChatCompletion): Promise<string[]> {
+    async #generatePostMedias(language: LanguageEnum, code: string): Promise<string[]> {
         const params: GenerateImagePramType = {
             code: '',
             theme: this.#randomTheme(),
             language: language
         };
 
-        const chatCompletionText = chatCompletion.choices[0].message.content;
-        const codes = [chatCompletionText];
+        const codes = [code];
         const images = await Promise.all(
             codes.map((code) => this.code2ImageService.generateImage({ ...params, code }))
         );
@@ -138,15 +137,20 @@ export class PostBuilderService implements PostBuilderInterface {
         return Promise.all(images.map((image) => this.storageService.uploadFile(image)));
     }
 
-    async #generateMediaUrls(topic: PostTopicEnum, language: LanguageEnum): Promise<string[]> {
+    async #generateCode(topic: PostTopicEnum, language: LanguageEnum): Promise<string> {
         const prompt = this.#generatePrompt(topic, language);
         const chatCompletion = await this.openAIService.createChat(prompt);
-
-        return this.#generatePostMedias(language, chatCompletion);
+        return chatCompletion.choices[0].message.content;
     }
 
     async create(params: CreateInstagramPostType = {}): Promise<string> {
-        const { topic: postTopic, language: postLanguage, caption: postCaption, mediaUrls: postMediaUrls } = params;
+        const {
+            code: postCode,
+            topic: postTopic,
+            language: postLanguage,
+            caption: postCaption,
+            mediaUrls: postMediaUrls
+        } = params;
 
         const topic = postTopic || this.randomTopic();
         const language = postLanguage || this.randomLanguage(topic);
@@ -155,9 +159,13 @@ export class PostBuilderService implements PostBuilderInterface {
             return this.create(params);
         }
 
-        const mediaUrls = postMediaUrls || (await this.#generateMediaUrls(topic, language));
-        const caption = postCaption || this.#generatePostCaption(topic, language);
+        if (!postMediaUrls) {
+            const code = postCode || (await this.#generateCode(topic, language));
+            const mediaUrls = await this.#generatePostMedias(language, code);
+            const caption = code ? postCaption : this.#generatePostCaption(topic, language);
+            return this.upload(mediaUrls, caption);
+        }
 
-        return this.upload(mediaUrls, caption);
+        return this.upload(postMediaUrls, postCaption);
     }
 }

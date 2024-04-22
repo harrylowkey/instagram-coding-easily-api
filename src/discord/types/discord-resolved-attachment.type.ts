@@ -1,15 +1,17 @@
+/* eslint-disable @typescript-eslint/naming-convention */
+
 export type DiscordResolvedAttachmentType = {
     id: string;
     filename: string;
     description?: string;
-    contentType?: string;
+    content_type?: string;
     size: number;
     url: string;
-    proxyUrl: string;
+    proxy_url: string;
     height?: number;
     width?: number;
     ephemeral?: boolean;
-    durationSecs?: number;
+    duration_secs?: number;
     waveform?: string;
     flags?: number;
 };

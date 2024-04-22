@@ -1,17 +1,17 @@
 import { LanguageEnum } from '@harrylowkey/code2image';
 import { InteractionResponseType } from 'discord-interactions';
 import { Response } from 'express';
-import { ApplicationCommandInteractionHandlerInterface } from '~discord/interfaces/appplication-command-interaction-handler.interface';
+import { ApplicationCommandInteractionHandlerInterface } from '~discord/interfaces/application-command-interaction-handler.interface';
 import { ApplicationCommandInteractionOptionType } from '~discord/types/discord-application-command-interaction-option.type';
-import { DiscordInteractionDataType } from '~discord/types/discord-interaction-data.type';
+import { ApplicationCommandDataType } from '~discord/types/discord-application-command-data.type';
 import { PostTopicEnum } from '~posts/enums/post-topic.enum';
-import { PostBuilderService } from '~posts/services/post-builder.service';
 import { CreateInstagramPostType } from '~posts/types/create-instagram-post.type';
+import { PostService } from '~posts/services/post.service';
 
 export class GeneratePostCommandHandler implements ApplicationCommandInteractionHandlerInterface {
     constructor(
-        private postBuilderService: PostBuilderService,
-        private data: DiscordInteractionDataType,
+        private postService: PostService,
+        private data: ApplicationCommandDataType,
         private res: Response
     ) {}
 
@@ -32,12 +32,12 @@ export class GeneratePostCommandHandler implements ApplicationCommandInteraction
     }
 
     #createPost(postTopic: PostTopicEnum, postLanguage: LanguageEnum): void {
-        const topic = postTopic || this.postBuilderService.randomTopic();
-        const language = postLanguage || this.postBuilderService.randomLanguage(topic);
-        this.postBuilderService.create({ topic, language });
+        const topic = postTopic || this.postService.randomTopic();
+        const language = postLanguage || this.postService.randomLanguage(topic);
+        this.postService.create({ topic, language });
     }
 
-    #response(): Response {
+    response(): Response {
         return this.res.send({
             type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
             data: { content: 'Generating post...' }
@@ -50,6 +50,6 @@ export class GeneratePostCommandHandler implements ApplicationCommandInteraction
 
         this.#createPost(topic, language);
 
-        return this.#response();
+        return this.response();
     }
 }

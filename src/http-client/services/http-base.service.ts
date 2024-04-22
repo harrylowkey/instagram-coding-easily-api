@@ -54,13 +54,24 @@ export abstract class HttpBaseService {
         });
     }
 
+    // TODO: handle it
+    // {
+    //  message: 'The aspect ratio is not supported.',
+    //  type: 'OAuthException',
+    //  code: 36003,
+    //  error_subcode: 2207009,
+    //  is_transient: false,
+    //  error_user_title: 'Invalid aspect ratio',
+    //  error_user_msg: "The submitted image with aspect ratio ('717/209',) cannot be published. Please submit an image with a valid aspect ratio.",
+    //  fbtrace_id: 'A64fo04Ql_J8awy5i6rs6so'
+    // }
+
     public async request(config: AxiosRequestConfig = {}) {
         try {
             return await firstValueFrom(
                 this.httpClient.request(config).pipe(map((response) => camelcaseKeys(response.data, { deep: true })))
             );
         } catch (error) {
-            // console.log(error.response?.data?.errors);
             console.log(error);
             throw new HttpClientException(error);
         }

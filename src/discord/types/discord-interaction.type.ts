@@ -1,7 +1,8 @@
 import { InteractionType } from 'discord-interactions';
-import { DiscordInteractionDataType } from './discord-interaction-data.type';
+import { ApplicationCommandDataType } from './discord-application-command-data.type';
+import { DiscordModalSubmitDataType } from './discord-modal-submit-data.type';
 
 export type DiscordInteractionType = {
     type: InteractionType;
-    data: DiscordInteractionDataType;
+    data: ApplicationCommandDataType | DiscordModalSubmitDataType;
 };

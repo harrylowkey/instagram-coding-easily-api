@@ -6,4 +6,5 @@ export type CreateInstagramPostType = {
     language?: LanguageEnum;
     mediaUrls?: string[];
     caption?: string;
+    code?: string;
 };

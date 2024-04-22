@@ -1,4 +1,4 @@
-import snakecase from 'snakecase-keys';
+import snakecaseKeys from 'snakecase-keys';
 
 import { AxiosRequestConfig } from 'axios';
 import { env } from '~config/env.config';
@@ -25,16 +25,16 @@ export class InstagramGraphService extends HttpBaseService {
     }
 
     #createContainer(params: CreateContainerType): Promise<ContainerType> {
-        return this.#post('/media', { params: snakecase(params) });
+        return this.#post('/media', { params: snakecaseKeys(params) });
     }
 
     #createCarouselContainer(children: string[], caption: string = ''): Promise<ContainerType> {
         const params = { children: children.join(','), mediaType: MediaTypeEnum.CAROUSEL, caption };
-        return this.#post('/media', { params: snakecase(params) });
+        return this.#post('/media', { params: snakecaseKeys(params) });
     }
 
     #publishContainer(containerId: string): Promise<ContainerType> {
-        return this.#post('/media_publish', { params: snakecase({ creationId: containerId }) });
+        return this.#post('/media_publish', { params: snakecaseKeys({ creationId: containerId }) });
     }
 
     async uploadSimplePost(params: UploadSimplePostType): Promise<ContainerType> {
