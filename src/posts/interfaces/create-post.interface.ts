@@ -2,7 +2,7 @@ import { LanguageEnum } from '@harrylowkey/code2image';
 import { CreateInstagramPostType } from '~posts/types/create-instagram-post.type';
 
 export interface CreatePostInterface {
-    upload(imageUrls: string[], caption: string): Promise<string>;
-    create(params?: CreateInstagramPostType): Promise<string>;
+    upload(interactionToken: string, imageUrls: string[], caption: string): Promise<void>;
+    create(interactionToken: string, params: CreateInstagramPostType): Promise<void>;
     generatePostMedias(language: LanguageEnum, code: string): Promise<string[]>;
 }

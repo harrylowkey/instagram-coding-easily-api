@@ -7,11 +7,12 @@ import { ApplicationCommandDataType } from '~discord/types/discord-application-c
 import { PostTopicEnum } from '~posts/enums/post-topic.enum';
 import { CreateInstagramPostType } from '~posts/types/create-instagram-post.type';
 import { PostService } from '~posts/services/post.service';
+import { DiscordInteractionType } from '~discord/types/discord-interaction.type';
 
 export class GeneratePostCommandHandler implements ApplicationCommandInteractionHandlerInterface {
     constructor(
         private postService: PostService,
-        private data: ApplicationCommandDataType,
+        private dto: DiscordInteractionType,
         private res: Response
     ) {}
 
@@ -24,7 +25,7 @@ export class GeneratePostCommandHandler implements ApplicationCommandInteraction
     }
 
     #extractParams(): CreateInstagramPostType {
-        const { options } = this.data;
+        const { options } = this.dto.data as ApplicationCommandDataType;
         let topic = this.#getTopic(options);
         let language = this.#getLanguage(options);
 
@@ -32,7 +33,8 @@ export class GeneratePostCommandHandler implements ApplicationCommandInteraction
     }
 
     #createPost(topic: PostTopicEnum, language: LanguageEnum): void {
-        this.postService.create({ topic, language });
+        const { token } = this.dto;
+        this.postService.create(token, { topic, language });
     }
 
     response(): Response {

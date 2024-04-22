@@ -6,6 +6,7 @@ import { Code2ImageService, LanguageEnum, ThemeEnum, GenerateImagePramType } fro
 import { CreateInstagramPostType } from '~posts/types/create-instagram-post.type';
 import { OpenAIPostService } from './openai-post.service';
 import { HASHTAGS } from '~posts/constants/hashtag.constant';
+import { DiscordClientService } from '~discord/services/discord-client.service';
 
 @Injectable()
 export class PostService implements CreatePostInterface {
@@ -14,7 +15,8 @@ export class PostService implements CreatePostInterface {
         private openAIPostService: OpenAIPostService,
         private instagramGraphService: InstagramGraphService,
         private storageService: StorageService,
-        private code2ImageService: Code2ImageService
+        private code2ImageService: Code2ImageService,
+        private discordClientService: DiscordClientService
     ) {}
 
     get hashtags(): string {
@@ -36,26 +38,36 @@ export class PostService implements CreatePostInterface {
         }
     }
 
-    async upload(imageUrls: string[], caption = ''): Promise<string> {
+    async createInteractionResponse(interactionToken: string, content: string): Promise<void> {
+        await this.discordClientService.createFollowupMessage(interactionToken, {
+            content
+        });
+    }
+
+    async upload(interactionToken: string, imageUrls: string[], caption = ''): Promise<void> {
         caption = `${caption}\n${this.hashtags}`;
 
         const isSimplePost = imageUrls.length === 1;
         try {
+            let message = 'Successfully uploaded post';
             if (isSimplePost) {
                 await this.instagramGraphService.uploadSimplePost({
                     imageUrl: imageUrls[0],
                     caption
                 });
-                return 'Successfully uploaded simple post';
+                message = 'Successfully uploaded simple post';
+            } else {
+                await this.instagramGraphService.uploadCarouselPost({
+                    imageUrls,
+                    caption
+                });
+                message = 'Successfully uploaded carousel post';
             }
 
-            await this.instagramGraphService.uploadCarouselPost({
-                imageUrls,
-                caption
-            });
-            return 'Successfully uploaded carousel post';
+            await this.createInteractionResponse(interactionToken, message);
         } catch (error) {
             console.log('Failed to upload post', error.response);
+            await this.createInteractionResponse(interactionToken, `Failed to upload post: ${error.response}`);
         }
     }
 
@@ -75,22 +87,27 @@ export class PostService implements CreatePostInterface {
         return Promise.all(images.map((image) => this.storageService.uploadFile(image)));
     }
 
-    async createAndUploadPostWithCode(code: string, language: LanguageEnum, caption?: string): Promise<string> {
+    async createAndUploadPostWithCode(
+        interactionToken: string,
+        code: string,
+        language: LanguageEnum,
+        caption?: string
+    ): Promise<void> {
         const mediaUrls = await this.generatePostMedias(language, code);
-        return this.upload(mediaUrls, caption);
+        return this.upload(interactionToken, mediaUrls, caption);
     }
 
-    async create(params: CreateInstagramPostType = {}): Promise<string> {
+    async create(interactionToken: string, params: CreateInstagramPostType = {}): Promise<void> {
         const { code, language, caption, mediaUrls } = params;
 
         if (mediaUrls) {
-            return this.upload(mediaUrls, caption);
+            return this.upload(interactionToken, mediaUrls, caption);
         }
 
         if (code) {
-            return this.createAndUploadPostWithCode(code, language, caption);
+            return this.createAndUploadPostWithCode(interactionToken, code, language, caption);
         }
 
-        return this.openAIPostService.create(params);
+        return this.openAIPostService.create(interactionToken, params);
     }
 }

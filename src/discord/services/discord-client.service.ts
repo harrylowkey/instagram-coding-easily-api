@@ -34,4 +34,8 @@ export class DiscordClientService extends HttpBaseService {
     async #deleteGlobalCommand(permissionCommandId: string): Promise<void> {
         await this.delete(`/applications/${env.DISCORD.APP_ID}/commands/${permissionCommandId}`);
     }
+
+    async createFollowupMessage(interactionToken: string, data: any): Promise<void> {
+        await this.post(`/webhooks/${env.DISCORD.APP_ID}/${interactionToken}`, data);
+    }
 }

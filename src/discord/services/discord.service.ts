@@ -15,14 +15,14 @@ import { PostService } from '~posts/services/post.service';
 export class DiscordService {
     constructor(private postService: PostService) {}
 
-    #handleApplicationCommandInteraction(data: ApplicationCommandDataType, res: Response): Response {
-        const { name: commandName } = data;
+    #handleApplicationCommandInteraction(dto: DiscordInteractionType, res: Response): Response {
+        const { name: commandName } = dto.data as ApplicationCommandDataType;
 
         switch (commandName) {
             case 'generate-post':
-                return new GeneratePostCommandHandlerCreator(this.postService, data, res).handle();
+                return new GeneratePostCommandHandlerCreator(this.postService, dto, res).handle();
             case 'create-post-with-image':
-                return new CreatePostWithImageCommandHandlerCreator(this.postService, data, res).handle();
+                return new CreatePostWithImageCommandHandlerCreator(this.postService, dto, res).handle();
             case 'create-post-with-code':
                 return new CreatePostWithCodeCommandHandler(res).handle();
             default:
@@ -30,18 +30,18 @@ export class DiscordService {
         }
     }
 
-    #handleModelSubmitInteraction(data: DiscordModalSubmitDataType, res: Response): Response {
-        const { custom_id } = data;
+    #handleModelSubmitInteraction(dto: DiscordInteractionType, res: Response): Response {
+        const { custom_id } = dto.data as DiscordModalSubmitDataType;
 
         if (custom_id == 'create-post-with-code-modal') {
-            return new CreatePostWithCodeModalSubmitHandler(this.postService, data, res).handle();
+            return new CreatePostWithCodeModalSubmitHandler(this.postService, dto, res).handle();
         }
 
         throw new NotImplementedException();
     }
 
     handleDiscordBotInteraction(dto: DiscordInteractionType, res: Response): Response {
-        const { type, data } = dto;
+        const { type } = dto;
 
         switch (type) {
             case InteractionType.PING:
@@ -51,9 +51,9 @@ export class DiscordService {
             case InteractionType.APPLICATION_COMMAND_AUTOCOMPLETE:
                 return res.send({ type: InteractionResponseType.APPLICATION_COMMAND_AUTOCOMPLETE_RESULT });
             case InteractionType.MODAL_SUBMIT:
-                return this.#handleModelSubmitInteraction(data as DiscordModalSubmitDataType, res);
+                return this.#handleModelSubmitInteraction(dto, res);
             case InteractionType.APPLICATION_COMMAND:
-                return this.#handleApplicationCommandInteraction(data as ApplicationCommandDataType, res);
+                return this.#handleApplicationCommandInteraction(dto, res);
             default:
                 throw new NotImplementedException();
         }

@@ -6,11 +6,12 @@ import { ApplicationCommandDataType } from '~discord/types/discord-application-c
 import { DiscordResolvedDataType } from '~discord/types/discord-resolved-data.type';
 import { CreateInstagramPostType } from '~posts/types/create-instagram-post.type';
 import { PostService } from '~posts/services/post.service';
+import { DiscordInteractionType } from '~discord/types/discord-interaction.type';
 
 export class CreatePostWithImageCommandHandler implements ApplicationCommandInteractionHandlerInterface {
     constructor(
         private postService: PostService,
-        private data: ApplicationCommandDataType,
+        private dto: DiscordInteractionType,
         private res: Response
     ) {}
 
@@ -25,7 +26,7 @@ export class CreatePostWithImageCommandHandler implements ApplicationCommandInte
     }
 
     #extractParams(): CreateInstagramPostType {
-        const { options, resolved } = this.data;
+        const { options, resolved } = this.dto.data as ApplicationCommandDataType;
         const imageUrls = this.#getImageUrls(options, resolved);
         const caption = this.#getCaption(options);
 
@@ -33,7 +34,8 @@ export class CreatePostWithImageCommandHandler implements ApplicationCommandInte
     }
 
     #uploadPost(postMediaUrls: string[], postCaption: string): void {
-        this.postService.upload(postMediaUrls, postCaption);
+        const { token } = this.dto;
+        this.postService.upload(token, postMediaUrls, postCaption);
     }
 
     response(): Response {

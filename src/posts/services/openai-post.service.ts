@@ -77,19 +77,19 @@ export class OpenAIPostService implements CreateOpenAIPostInterface {
         return chatCompletion.choices[0].message.content;
     }
 
-    async create(params: CreateInstagramPostType): Promise<string> {
+    async create(interactionToken: string, params: CreateInstagramPostType): Promise<void> {
         const { topic: postTopic, language: postLanguage, caption: postCaption } = params;
 
         const topic = postTopic || randomTopic();
         const language = postLanguage || randomLanguage(topic);
 
         if (!topic || !language) {
-            return this.create(params);
+            return this.create(interactionToken, params);
         }
 
         const code = await this.generateCode(topic, language);
         const mediaUrls = await this.postService.generatePostMedias(language, code);
         const caption = postCaption || this.generatePostCaption(topic, language);
-        return this.postService.upload(mediaUrls, caption);
+        return this.postService.upload(interactionToken, mediaUrls, caption);
     }
 }

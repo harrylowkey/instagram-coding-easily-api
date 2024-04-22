@@ -46,6 +46,15 @@ export abstract class HttpBaseService {
         });
     }
 
+    public patch(url: string, data?: any, config: AxiosRequestConfig = {}) {
+        return this.request({
+            ...config,
+            method: 'patch',
+            url,
+            data
+        });
+    }
+
     public delete(url: string, config: AxiosRequestConfig = {}) {
         return this.request({
             ...config,

@@ -6,11 +6,12 @@ import { ModelSubmitInteractionInterface } from '~discord/interfaces/modal-submi
 import { DiscordModalSubmitDataType, ModalSubmitComponentType } from '~discord/types/discord-modal-submit-data.type';
 import { LanguageEnum } from '@harrylowkey/code2image';
 import { PostService } from '~posts/services/post.service';
+import { DiscordInteractionType } from '~discord/types/discord-interaction.type';
 
 export class CreatePostWithCodeModalSubmitHandler implements ModelSubmitInteractionInterface {
     constructor(
         private postService: PostService,
-        private data: DiscordModalSubmitDataType,
+        private dto: DiscordInteractionType,
         private res: Response
     ) {}
 
@@ -40,11 +41,12 @@ export class CreatePostWithCodeModalSubmitHandler implements ModelSubmitInteract
     }
 
     handle(): Response {
-        const { components } = this.data;
+        const { token } = this.dto;
+        const { components } = this.dto.data as DiscordModalSubmitDataType;
         const [language, code, caption] = this.#extractPostParams(components);
         this.#validateLanguage(language as unknown as LanguageEnum);
 
-        this.postService.create({ language, code, caption });
+        this.postService.create(token, { language, code, caption });
         return this.response();
     }
 }
