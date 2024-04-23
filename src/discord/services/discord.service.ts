@@ -8,12 +8,16 @@ import { DiscordModalSubmitDataType } from '~discord/types/discord-modal-submit-
 import { GeneratePostCommandHandlerCreator } from './application-commands/creators/generate-post-command-interaction-handler.creator';
 import { CreatePostWithImageCommandHandlerCreator } from './application-commands/creators/create-post-with-image-command-interaction-handler.creator';
 import { CreatePostWithCodeCommandHandler } from './application-commands/handlers/create-post-with-code-command.handler';
-import { CreatePostWithCodeModalSubmitHandler } from './modal-submit/services/create-post-with-code-modal-submit-handler.service';
+import { CreatePostWithCodeModalSubmitHandlerService } from './modal-submit/services/create-post-with-code-modal-submit-handler.service';
 import { PostService } from '~posts/services/post.service';
+import { DiscordMessageHandlerService } from './message-component/services/discord-message-handler.service';
 
 @Injectable()
 export class DiscordService {
-    constructor(private postService: PostService) {}
+    constructor(
+        private postService: PostService,
+        private discordMessageHandlerService: DiscordMessageHandlerService
+    ) {}
 
     #handleApplicationCommandInteraction(dto: DiscordInteractionType, res: Response): Response {
         const { name: commandName } = dto.data as ApplicationCommandDataType;
@@ -34,10 +38,14 @@ export class DiscordService {
         const { custom_id } = dto.data as DiscordModalSubmitDataType;
 
         if (custom_id == 'create-post-with-code-modal') {
-            return new CreatePostWithCodeModalSubmitHandler(this.postService, dto, res).handle();
+            return new CreatePostWithCodeModalSubmitHandlerService(this.postService, dto, res).handle();
         }
 
         throw new NotImplementedException();
+    }
+
+    #handleMessageComponentInteraction(dto: DiscordInteractionType, res: Response): Response {
+        return this.discordMessageHandlerService.handle(dto, res);
     }
 
     handleDiscordBotInteraction(dto: DiscordInteractionType, res: Response): Response {
@@ -46,10 +54,10 @@ export class DiscordService {
         switch (type) {
             case InteractionType.PING:
                 return res.send({ type: InteractionResponseType.PONG });
-            case InteractionType.MESSAGE_COMPONENT:
-                return res.send({ type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE });
             case InteractionType.APPLICATION_COMMAND_AUTOCOMPLETE:
                 return res.send({ type: InteractionResponseType.APPLICATION_COMMAND_AUTOCOMPLETE_RESULT });
+            case InteractionType.MESSAGE_COMPONENT:
+                return this.#handleMessageComponentInteraction(dto, res);
             case InteractionType.MODAL_SUBMIT:
                 return this.#handleModelSubmitInteraction(dto, res);
             case InteractionType.APPLICATION_COMMAND:

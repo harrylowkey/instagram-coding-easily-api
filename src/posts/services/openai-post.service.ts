@@ -11,13 +11,15 @@ import { OpenAIService } from '~openai/services/openai.service';
 import { CreateOpenAIPostInterface } from '~posts/interfaces/create-openapi-post.interface';
 import { randomTopic } from '~posts/helpers/topic.helper';
 import { randomLanguage } from '~posts/helpers/language.helper';
+import { UploadPostService } from './upload-post.service';
 
 @Injectable()
 export class OpenAIPostService implements CreateOpenAIPostInterface {
     constructor(
         @Inject(forwardRef(() => PostService))
         private postService: PostService,
-        private openAIService: OpenAIService
+        private openAIService: OpenAIService,
+        private uploadPostService: UploadPostService
     ) {}
 
     get promptInstruction(): string {
@@ -77,19 +79,25 @@ export class OpenAIPostService implements CreateOpenAIPostInterface {
         return chatCompletion.choices[0].message.content;
     }
 
-    async create(interactionToken: string, params: CreateInstagramPostType): Promise<void> {
+    async preparePost(params: CreateInstagramPostType): Promise<Partial<CreateInstagramPostType>> {
         const { topic: postTopic, language: postLanguage, caption: postCaption } = params;
 
         const topic = postTopic || randomTopic();
         const language = postLanguage || randomLanguage(topic);
 
         if (!topic || !language) {
-            return this.create(interactionToken, params);
+            return this.preparePost(params);
         }
 
         const code = await this.generateCode(topic, language);
         const mediaUrls = await this.postService.generatePostMedias(language, code);
         const caption = postCaption || this.generatePostCaption(topic, language);
-        return this.postService.upload(interactionToken, mediaUrls, caption);
+
+        return { mediaUrls, caption };
+    }
+
+    async create(interactionId: string, interactionToken: string, params: CreateInstagramPostType): Promise<void> {
+        const { mediaUrls, caption } = await this.preparePost(params);
+        return this.uploadPostService.confirmUpload(interactionId, interactionToken, mediaUrls, caption);
     }
 }

@@ -35,7 +35,15 @@ export class DiscordClientService extends HttpBaseService {
         await this.delete(`/applications/${env.DISCORD.APP_ID}/commands/${permissionCommandId}`);
     }
 
-    async createFollowupMessage(interactionToken: string, data: any): Promise<void> {
+    async createFollowUpMessage(interactionToken: string, data: any): Promise<void> {
         await this.post(`/webhooks/${env.DISCORD.APP_ID}/${interactionToken}`, data);
+    }
+
+    async executeWebhook(webhookId: string, webhookToken: string, data: any): Promise<void> {
+        await this.post(`/webhooks/${webhookId}/${webhookToken}`, data);
+    }
+
+    async createMessage(channelId: string, data: any): Promise<void> {
+        await this.post(`/channels/${channelId}/messages`, data);
     }
 }

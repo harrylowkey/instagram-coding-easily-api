@@ -10,11 +10,13 @@ import { DiscordModule } from '~discord/discord.module';
 import { APP_FILTER } from '@nestjs/core';
 import { HttpExceptionFilter } from '~core/filters/http-exception.filter';
 import { VerifyDiscordRequestMiddleware } from '~core/middlewares/verify-discord-request.middleware';
+import { ScheduleModule } from '@nestjs/schedule';
 
 @Module({
     imports: [
         code2ImageConfig,
         serveStaticConfig,
+        ScheduleModule.forRoot(),
         PostModule,
         InstagramGraphModule,
         HttpClientModule,

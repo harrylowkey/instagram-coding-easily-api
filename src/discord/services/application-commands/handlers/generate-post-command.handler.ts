@@ -33,14 +33,14 @@ export class GeneratePostCommandHandler implements ApplicationCommandInteraction
     }
 
     #createPost(topic: PostTopicEnum, language: LanguageEnum): void {
-        const { token } = this.dto;
-        this.postService.create(token, { topic, language });
+        const { id, token } = this.dto;
+        this.postService.create(id, token, { topic, language });
     }
 
     response(): Response {
         return this.res.send({
             type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
-            data: { content: 'Generating post...' }
+            data: { content: ':hourglass: Preparing post...' }
         });
     }
 

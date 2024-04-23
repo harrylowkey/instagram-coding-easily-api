@@ -33,13 +33,13 @@ export class CreatePostWithImageCommandHandler implements ApplicationCommandInte
         return { mediaUrls: imageUrls, caption };
     }
 
-    #uploadPost(postMediaUrls: string[], postCaption: string): void {
-        const { token } = this.dto;
-        this.postService.upload(token, postMediaUrls, postCaption);
+    #uploadPost(mediaUrls: string[], caption: string): void {
+        const { id, token } = this.dto;
+        this.postService.create(id, token, { mediaUrls, caption });
     }
 
     response(): Response {
-        let content = 'Creating post...';
+        let content = ':hourglass: Preparing post...';
         return this.res.send({
             type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
             data: { content }

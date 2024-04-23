@@ -52,6 +52,57 @@ type Guild = {
     locale: string;
 };
 
+type Author = {
+    avatar: string;
+    avatar_decoration_data: null | any; // Change to the appropriate type if needed
+    bot: boolean;
+    clan: null | any; // Change to the appropriate type if needed
+    discriminator: string;
+    global_name: null | any; // Change to the appropriate type if needed
+    id: string;
+    public_flags: number;
+    username: string;
+};
+
+type DiscordInteractionMetadataType = {
+    authorizing_integration_owners: any[]; // Change to the appropriate type if needed
+    id: string;
+    name: string;
+    original_response_message_id: string;
+    type: number;
+    user: any; // Change to the appropriate type if needed
+};
+
+type MessageReference = {
+    channel_id: string;
+    guild_id: string;
+    message_id: string;
+};
+
+export type DiscordMessageType = {
+    application_id: string;
+    attachments: any[]; // Change to the appropriate type if needed
+    author: Author;
+    channel_id: string;
+    components: any[][]; // Change to the appropriate type if needed
+    content: string;
+    edited_timestamp: null | string;
+    embeds: any[][]; // Change to the appropriate type if needed
+    flags: number;
+    id: string;
+    interaction_metadata: DiscordInteractionMetadataType;
+    mention_everyone: boolean;
+    mention_roles: string[];
+    mentions: any[]; // Change to the appropriate type if needed
+    message_reference: MessageReference;
+    pinned: boolean;
+    position: number;
+    timestamp: string;
+    tts: boolean;
+    type: number;
+    webhook_id: string;
+};
+
 export type DiscordInteractionType = {
     id: string;
     type: InteractionType;
@@ -69,4 +120,5 @@ export type DiscordInteractionType = {
     member: Member;
     token: string;
     version: number;
+    message?: DiscordMessageType;
 };

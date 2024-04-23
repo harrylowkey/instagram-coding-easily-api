@@ -8,7 +8,7 @@ import { LanguageEnum } from '@harrylowkey/code2image';
 import { PostService } from '~posts/services/post.service';
 import { DiscordInteractionType } from '~discord/types/discord-interaction.type';
 
-export class CreatePostWithCodeModalSubmitHandler implements ModelSubmitInteractionInterface {
+export class CreatePostWithCodeModalSubmitHandlerService implements ModelSubmitInteractionInterface {
     constructor(
         private postService: PostService,
         private dto: DiscordInteractionType,
@@ -33,7 +33,7 @@ export class CreatePostWithCodeModalSubmitHandler implements ModelSubmitInteract
         }
     }
 
-    response(content = 'Generating post...'): Response {
+    response(content = ':hourglass: Preparing post...'): Response {
         return this.res.send({
             type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
             data: { content }
@@ -41,12 +41,12 @@ export class CreatePostWithCodeModalSubmitHandler implements ModelSubmitInteract
     }
 
     handle(): Response {
-        const { token } = this.dto;
+        const { id, token } = this.dto;
         const { components } = this.dto.data as DiscordModalSubmitDataType;
         const [language, code, caption] = this.#extractPostParams(components);
         this.#validateLanguage(language as unknown as LanguageEnum);
 
-        this.postService.create(token, { language, code, caption });
+        this.postService.create(id, token, { language, code, caption });
         return this.response();
     }
 }
