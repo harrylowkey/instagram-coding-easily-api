@@ -24,8 +24,8 @@ export class PostService implements CreatePostInterface {
         return `${hashtags.join(' ')}`;
     }
 
-    generateCaptionWithHashtags(caption = ''): string {
-        return `${caption}\n${this.hashtags}`;
+    generateCaptionWithHashtags(langauge: LanguageEnum, caption = ''): string {
+        return `${caption}\n#${langauge} ${this.hashtags}`;
     }
 
     randomTheme(): ThemeEnum {
@@ -69,7 +69,7 @@ export class PostService implements CreatePostInterface {
 
     async create(interactionId: string, interactionToken: string, params: CreateInstagramPostType = {}): Promise<void> {
         const { code, language, mediaUrls } = params;
-        const caption = this.generateCaptionWithHashtags(params.caption);
+        const caption = this.generateCaptionWithHashtags(language, params.caption);
 
         if (mediaUrls) {
             return this.uploadPostService.confirmUpload(interactionId, interactionToken, mediaUrls, caption);

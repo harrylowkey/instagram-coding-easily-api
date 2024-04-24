@@ -23,9 +23,9 @@ export class DiscordMessageHandlerService {
         const isAcceptUpload = (data as DiscordModalSubmitDataType).custom_id === 'accept-btn';
         if (!isAcceptUpload) {
             this.uploadPostService.cancelUpload(interactionId);
-            return this.response(res, 'Upload canceled');
+            return this.response(res, 'Cancelled successfully! :no_entry:');
         }
 
-        return this.response(res, 'Confirm! Post will be uploaded soon');
+        return this.response(res, 'Confirmed! Post will be uploaded soon :rocket:');
     }
 }

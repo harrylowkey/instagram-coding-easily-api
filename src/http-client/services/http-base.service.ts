@@ -80,7 +80,8 @@ export abstract class HttpBaseService {
                 this.httpClient.request(config).pipe(map((response) => camelcaseKeys(response.data, { deep: true })))
             );
         } catch (error) {
-            console.log(error);
+            console.log(error.response);
+            // console.log(error);
             throw new HttpClientException(error);
         }
     }

@@ -12,6 +12,7 @@ import { CreateOpenAIPostInterface } from '~posts/interfaces/create-openapi-post
 import { randomTopic } from '~posts/helpers/topic.helper';
 import { randomLanguage } from '~posts/helpers/language.helper';
 import { UploadPostService } from './upload-post.service';
+import { MULTIPLE_CHOICE_LANGUAGE_TOPIC_MAPPER } from '~posts/helpers/multiple-choice-topic-language-mapper.helper';
 
 @Injectable()
 export class OpenAIPostService implements CreateOpenAIPostInterface {
@@ -22,8 +23,17 @@ export class OpenAIPostService implements CreateOpenAIPostInterface {
         private uploadPostService: UploadPostService
     ) {}
 
+    get styleGeneratedResponsePromp(): string {
+        return `Ensure the question is clear and concise, and provide a sample code snippet for additional context..
+Limit each line to a maximum of 60 words, breaking lines if necessary.
+Breaking line should break the whole word.`;
+    }
+
     get promptInstruction(): string {
-        return 'Add the short description lesser or equal about 20 characters of the topic in the header. Not any comment or other text';
+        return `Add the short description lesser or equal about 20 characters of the topic in the header. 
+Not any comment or other text. 
+${this.styleGeneratedResponsePromp}
+`;
     }
 
     randomLevel(): string {
@@ -31,7 +41,7 @@ export class OpenAIPostService implements CreateOpenAIPostInterface {
         return levels[Math.floor(Math.random() * levels.length)];
     }
 
-    generatePromptDessignPattern(language: string, topic: PostTopicEnum): string {
+    generatePromptDessignPattern(topic: PostTopicEnum, language: string): string {
         const categoryKeys = Object.keys(DESIGN_PATTERN_CATEGORIES);
 
         const randomCategoryKey = categoryKeys[Math.floor(Math.random() * categoryKeys.length)];
@@ -43,17 +53,38 @@ export class OpenAIPostService implements CreateOpenAIPostInterface {
         return `Write the short sample ${this.randomLevel()} code in ${language} about the topic ${category}. ${this.promptInstruction}`;
     }
 
-    generatePrompt(topic: PostTopicEnum, language: string): ChatCompletionMessageParam[] {
-        let content: string = `Write the short sample code in ${language} about the ${topic} topic. ${this.promptInstruction}`;
+    generateBadAndGoodCodePrompt(topic: PostTopicEnum, language: LanguageEnum): string {
+        return `Write the short ${this.randomLevel()} sample code in ${language} to compare the ${topic}. 
+Mark the sample bad code with comment // Bad Practice and good code with comment // Good Practice.
+${this.promptInstruction}`;
+    }
 
-        if (topic == PostTopicEnum.BAD_AND_GOOD_CODE) {
-            content = `Write the short ${this.randomLevel()} sample code in ${language} to compare the ${topic}.
-					Mark the sample bad code with comment // Bad Practice and good code with comment // Good Practice.
-					${this.promptInstruction}`;
-        }
+    generateQuestionAndAnswerPrompt(language: LanguageEnum): string {
+        const availableTopics = MULTIPLE_CHOICE_LANGUAGE_TOPIC_MAPPER[language];
+        const topic = availableTopics[Math.floor(Math.random() * availableTopics.length)];
+        return `You are designing a medium, hard multiple-choice question for a coding interview.
+The question should focus on the topic ${topic} in ${language}.
+${this.styleGeneratedResponsePromp}
+Include a maximum of 4 choices, each short and clear on one line.
+`;
+    }
 
-        if (topic == PostTopicEnum.DESIGN_PATTERN) {
-            content = this.generatePromptDessignPattern(language, topic);
+    generatePrompt(topic: PostTopicEnum, language: LanguageEnum): ChatCompletionMessageParam[] {
+        let content = '';
+        switch (topic) {
+            case PostTopicEnum.BAD_AND_GOOD_CODE:
+                content = this.generateBadAndGoodCodePrompt(topic, language);
+                break;
+
+            case PostTopicEnum.DESIGN_PATTERN:
+                content = this.generatePromptDessignPattern(topic, language);
+                break;
+
+            case PostTopicEnum.MULTIPLE_CHOICE_QUESTION:
+                content = this.generateQuestionAndAnswerPrompt(language);
+                break;
+            default:
+                content = `Write the short sample ${this.randomLevel()} code in ${language} about the ${topic} topic. ${this.promptInstruction}`;
         }
 
         return [
@@ -64,11 +95,14 @@ export class OpenAIPostService implements CreateOpenAIPostInterface {
         ];
     }
 
-    generatePostCaption(topic: PostTopicEnum, language: string): string {
+    generatePostCaption(topic: PostTopicEnum, language: LanguageEnum, customizedCaption?: string): string {
         const pageHashtags = ['#codingeasily', '#coding_easily'];
         const topicHashtag = topic.length > 1 ? `${topic.split(' ').join('')}` : topic;
-        const hashtags = [...pageHashtags, `#${topicHashtag}`, `#${language}`, ...HASHTAGS];
-        const caption = `${topic} in ${language}`;
+        const hashtags = [`#${language}`, ...pageHashtags, `#${topicHashtag}`, `#${language}`, ...HASHTAGS];
+        const caption =
+            topic === PostTopicEnum.MULTIPLE_CHOICE_QUESTION
+                ? 'Comment your answer below'
+                : customizedCaption || `${topic} in ${language}`;
 
         return `${caption} \n${hashtags.join(' ')}`;
     }
