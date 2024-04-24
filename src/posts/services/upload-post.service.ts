@@ -1,5 +1,5 @@
 import { InstagramGraphService } from '~instagram-graph/services/instagram-graph.service';
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { DiscordClientService } from '~discord/services/discord-client.service';
 import { PreviewPostService } from './preview-post.service';
 import { UploadPostInterface } from '~posts/interfaces/upload-post.interface';
@@ -10,6 +10,8 @@ const UPLOADING_JOBS = {};
 
 @Injectable()
 export class UploadPostService implements UploadPostInterface {
+    private readonly logger = new Logger(UploadPostService.name);
+
     constructor(
         private instagramGraphService: InstagramGraphService,
         private discordClientService: DiscordClientService,
@@ -22,7 +24,7 @@ export class UploadPostService implements UploadPostInterface {
         });
     }
 
-    async upload(interactionToken: string, imageUrls: string[], caption: string): Promise<void> {
+    async upload(imageUrls: string[], caption: string, interactionToken?: string): Promise<void> {
         const isSimplePost = imageUrls.length === 1;
         try {
             if (isSimplePost) {
@@ -37,10 +39,16 @@ export class UploadPostService implements UploadPostInterface {
                 });
             }
 
-            await this.sendFollowUpMessage(interactionToken, 'Successfully uploaded post');
+            if (interactionToken) {
+                await this.sendFollowUpMessage(interactionToken, 'Successfully uploaded post');
+            }
+
+            this.logger.log('Successfully uploaded post');
         } catch (error) {
-            console.log('Failed to upload post', error.response);
-            await this.sendFollowUpMessage(interactionToken, `Failed to upload post: ${error.response}`);
+            this.logger.error(`Failed to upload post ${error.response}`);
+            if (interactionToken) {
+                await this.sendFollowUpMessage(interactionToken, `Failed to upload post: ${error.response}`);
+            }
         }
     }
 
@@ -56,7 +64,7 @@ export class UploadPostService implements UploadPostInterface {
         );
 
         UPLOADING_JOBS[interactionId] = setTimeout(async () => {
-            await this.upload(interactionToken, imageUrls, caption);
+            await this.upload(imageUrls, caption, interactionToken);
             delete UPLOADING_JOBS[interactionId];
         }, UPLOAD_POST_PENDING_TIME);
     }

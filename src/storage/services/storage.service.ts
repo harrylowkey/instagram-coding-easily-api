@@ -1,11 +1,14 @@
 import { S3Client, PutObjectCommand, GetObjectCommand } from '@aws-sdk/client-s3';
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
+import { Logger } from '@nestjs/common';
 import { v4 as uuidv4 } from 'uuid';
 import { env } from '~config/env.config';
 import { S3Exception } from '~core/exceptions/s3.exception';
 
 export class StorageService {
     private readonly s3Client = new S3Client({});
+    private readonly logger = new Logger(StorageService.name);
+
     constructor() {
         this.s3Client = new S3Client({ region: env.AWS.REGION });
     }
@@ -35,7 +38,7 @@ export class StorageService {
             await this.s3Client.send(uploadCommand);
             return this.generateUrl(key);
         } catch (err) {
-            console.log(err);
+            this.logger.error(err);
             throw new S3Exception();
         }
     }

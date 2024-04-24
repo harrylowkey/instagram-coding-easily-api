@@ -33,16 +33,24 @@ export class PreviewPostService implements PreviewPostService {
         };
     }
 
-    generatePreviewPostData(imageUrls: string[], caption?: string): any {
+    generatePreviewPostData(imageUrls: string[], caption?: string, description?: string): any {
+        const content =
+            caption ||
+            `Generated post successfully! :white_check_mark:\nPost will be uploaded in :one: minutes. Skip or click **OK** to confirm upload / click **Cancel** to reject uploading.`;
+
         return {
-            content: `Generated post successfully! :white_check_mark:\nPost will be uploaded in :one: minutes. Skip or click **OK** to confirm upload / click **Cancel** to reject uploading.`,
+            content: content,
             embeds: imageUrls.map((url) => ({
                 type: 'image',
                 image: { url },
-                description: caption,
+                description: description,
                 title: 'Preview post'
             }))
         };
+    }
+
+    generateUploadedPost(imageUrls: string[], caption?: string, description?: string): Promise<void> {
+        return snakecaseKeys(this.generatePreviewPostData(imageUrls, caption, description));
     }
 
     generatePreviewPost(imageUrls: string[], caption?: string): Promise<void> {

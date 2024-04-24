@@ -4,9 +4,11 @@ import camelcaseKeys from 'camelcase-keys';
 import { firstValueFrom, map } from 'rxjs';
 import axios, { AxiosRequestConfig } from 'axios';
 import { HttpClientException } from '~core/exceptions/http-client.exception';
+import { Logger } from '@nestjs/common';
 
 export abstract class HttpBaseService {
     protected readonly httpClient: HttpService;
+    private readonly logger = new Logger(HttpBaseService.name);
 
     public constructor() {
         this.httpClient = new HttpService(axios.create());
@@ -80,8 +82,7 @@ export abstract class HttpBaseService {
                 this.httpClient.request(config).pipe(map((response) => camelcaseKeys(response.data, { deep: true })))
             );
         } catch (error) {
-            console.log(error.response);
-            // console.log(error);
+            console.log(error);
             throw new HttpClientException(error);
         }
     }

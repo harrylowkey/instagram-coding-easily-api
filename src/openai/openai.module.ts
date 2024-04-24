@@ -1,9 +1,11 @@
-import { Module } from '@nestjs/common';
+import { forwardRef, Module } from '@nestjs/common';
+import { PostModule } from '~posts/post.module';
+import { GeneratePostCronService } from './crons/generate-post.cron';
 import { OpenAIService } from './services/openai.service';
 
 @Module({
-    imports: [],
-    providers: [OpenAIService],
+    imports: [forwardRef(() => PostModule)],
+    providers: [OpenAIService, GeneratePostCronService],
     exports: [OpenAIService],
     controllers: []
 })

@@ -113,7 +113,7 @@ Include a maximum of 4 choices, each short and clear on one line.
         return chatCompletion.choices[0].message.content;
     }
 
-    async preparePost(params: CreateInstagramPostType): Promise<Partial<CreateInstagramPostType>> {
+    async preparePost(params: CreateInstagramPostType = {}): Promise<Partial<CreateInstagramPostType>> {
         const { topic: postTopic, language: postLanguage, caption: postCaption } = params;
 
         const topic = postTopic || randomTopic();

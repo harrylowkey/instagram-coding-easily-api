@@ -8,9 +8,9 @@ import { PreviewPostService } from './services/preview-post.service';
 import { UploadPostService } from './services/upload-post.service';
 
 @Module({
-    imports: [OpenAIModule, InstagramGraphModule, forwardRef(() => DiscordModule)],
+    imports: [forwardRef(() => OpenAIModule), InstagramGraphModule, forwardRef(() => DiscordModule)],
     providers: [PostService, OpenAIPostService, PreviewPostService, UploadPostService],
-    exports: [PostService, OpenAIPostService, UploadPostService],
+    exports: [PostService, OpenAIPostService, UploadPostService, PreviewPostService],
     controllers: []
 })
 export class PostModule {}
