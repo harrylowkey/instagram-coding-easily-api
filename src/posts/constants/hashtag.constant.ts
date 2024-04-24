@@ -4,8 +4,6 @@ export const HASHTAGS = [
     '#coding',
     '#code',
     '#devlife',
-    '#programming',
-    '#coding',
     '#developer',
     '#webdevelopment',
     '#softwareengineering',
