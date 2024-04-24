@@ -4,11 +4,11 @@
 - [x] Upload posts with embed codes to Instagram
 - [x] Set up posts with images & captions and upload them to Instagram
 - [x] Integrate with Discord Bot
-- [ ] Automatically generate posts and upload them to Instagram at intervals.
+- [x] Automatically generate posts and upload them to Instagram at intervals.
 
 Check more the generated posts at Instagram page [coding.easily](https://www.instagram.com/coding.easily/)
 
-## Show case
+## Demo
 
 ### Random generated post in C language
 ![Show case](./showcases/auto-generate-post.png)
