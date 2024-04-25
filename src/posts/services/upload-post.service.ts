@@ -4,7 +4,6 @@ import { DiscordClientService } from '~discord/services/discord-client.service';
 import { PreviewPostService } from './preview-post.service';
 import { UploadPostInterface } from '~posts/interfaces/upload-post.interface';
 import { UPLOAD_POST_PENDING_TIME } from '~posts/constants/upload-post-pending-time.constant';
-
 /* eslint-disable @typescript-eslint/naming-convention */
 const UPLOADING_JOBS = {};
 
@@ -45,10 +44,12 @@ export class UploadPostService implements UploadPostInterface {
 
             this.logger.log('Successfully uploaded post');
         } catch (error) {
-            this.logger.error(`Failed to upload post ${error.response}`);
-            if (interactionToken) {
-                await this.sendFollowUpMessage(interactionToken, `Failed to upload post: ${error.response}`);
-            }
+            const errorMessage = `Failed to upload post: ${error.response}`;
+
+            this.logger.error(errorMessage);
+            await this.discordClientService.reportBug(
+                this.previewPostService.generatePreviewPost(imageUrls, caption, errorMessage)
+            );
         }
     }
 
@@ -60,7 +61,7 @@ export class UploadPostService implements UploadPostInterface {
     ): Promise<void> {
         await this.discordClientService.createFollowUpMessage(
             interactionToken,
-            this.previewPostService.generatePreviewPost(imageUrls, caption)
+            this.previewPostService.generatePreviewConfirmUploadPost(imageUrls, caption)
         );
 
         UPLOADING_JOBS[interactionId] = setTimeout(async () => {

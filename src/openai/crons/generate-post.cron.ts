@@ -19,8 +19,8 @@ export class GeneratePostCronService {
         const { mediaUrls, caption } = await this.openAIPostService.preparePost();
         await this.uploadPostService.upload(mediaUrls, caption);
 
-        await this.discordClientService.sendMessageToInstagramCodingEasyChannel(
-            this.previewPostService.generateUploadedPost(mediaUrls, 'Generated and upload post successfully!', caption)
+        await this.discordClientService.sendMessageToMainChannel(
+            this.previewPostService.generatePreviewPostData(mediaUrls, caption)
         );
     }
 }

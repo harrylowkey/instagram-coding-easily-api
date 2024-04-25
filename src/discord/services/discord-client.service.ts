@@ -5,7 +5,6 @@ import { HttpBaseService } from '~http-client/services/http-base.service';
 import { DiscordCommandService } from './discord-command.service';
 
 export class DiscordClientService extends HttpBaseService {
-    private readonly INSTAGRAM_CODING_EASILY_CHANNEL_ID = '1231215373836357683';
     constructor() {
         super();
         this.configBaseURL('https://discord.com/api/v10');
@@ -48,13 +47,11 @@ export class DiscordClientService extends HttpBaseService {
         await this.post(`/channels/${channelId}/messages`, data);
     }
 
-    async getGuildChannels(): Promise<any> {
-        console.log(env.DISCORD.GUILD_ID);
-        const channels = await this.get(`/guilds/${env.DISCORD.GUILD_ID}/channels`);
-        console.log(channels);
+    async sendMessageToMainChannel(data: any, channelId?: string): Promise<void> {
+        await this.createMessage(channelId || env.DISCORD.CHANNEL_ID, data);
     }
 
-    async sendMessageToInstagramCodingEasyChannel(data: any): Promise<void> {
-        await this.createMessage(this.INSTAGRAM_CODING_EASILY_CHANNEL_ID, data);
+    async reportBug(data: any): Promise<void> {
+        await this.createMessage(env.DISCORD.BUG_REPORT_CHANNEL_ID, data);
     }
 }

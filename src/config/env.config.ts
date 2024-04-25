@@ -23,6 +23,7 @@ export const env = {
         APP_ID: process.env.DISCORD_APP_ID,
         TOKEN: process.env.DISCORD_TOKEN,
         PUBLIC_KEY: process.env.DISCORD_PUBLIC_KEY,
-        GUILD_ID: process.env.DISCORD_GUILD_ID
+        CHANNEL_ID: process.env.DISCORD_CHANNEL_ID,
+        BUG_REPORT_CHANNEL_ID: process.env.DISCORD_BUG_REPORT_CHANNEL_ID || process.env.DISCORD_CHANNEL_ID
     }
 };
