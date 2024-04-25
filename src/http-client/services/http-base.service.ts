@@ -83,6 +83,7 @@ export abstract class HttpBaseService {
             );
         } catch (error) {
             console.log(error);
+            this.logger.debug(error.response?.data?.error?.message);
             throw new HttpClientException(error);
         }
     }

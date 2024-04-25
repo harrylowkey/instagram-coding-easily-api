@@ -38,15 +38,16 @@ export class PreviewPostService implements PreviewPostService {
             message ||
             `Generated post successfully! :white_check_mark:\nPost will be uploaded in :one: minutes. Skip or click **OK** to confirm upload / click **Cancel** to reject uploading.`;
 
-        return {
-            content: content,
-            embeds: imageUrls.map((url) => ({
+        const embeds = [
+            {
                 type: 'image',
-                image: { url },
+                image: { url: imageUrls[0] },
                 description: caption,
                 title: 'Preview post'
-            }))
-        };
+            }
+        ];
+
+        return { content, embeds };
     }
 
     generatePreviewPost(imageUrls: string[], caption?: string, message?: string): Promise<void> {

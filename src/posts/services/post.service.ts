@@ -24,8 +24,9 @@ export class PostService implements CreatePostInterface {
         return `${hashtags.join(' ')}`;
     }
 
-    generateCaptionWithHashtags(langauge: LanguageEnum, caption = ''): string {
-        return `${caption}\n#${langauge} ${this.hashtags}`;
+    generateCaptionWithHashtags(language: LanguageEnum | undefined, caption: string = ''): string {
+        const languageHashtag = language ? `#${language}` : '';
+        return `${caption}\n${languageHashtag} ${this.hashtags}`;
     }
 
     randomTheme(): ThemeEnum {
