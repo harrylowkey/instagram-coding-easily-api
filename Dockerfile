@@ -1,19 +1,23 @@
-FROM public.ecr.aws/docker/library/node:20-alpine AS development
+FROM node:20-slim AS base
 WORKDIR /usr/src/app
+ENV PNPM_HOME="/pnpm"
+ENV PATH="$PNPM_HOME:$PATH"
+RUN corepack enable
 ARG ENVIRONMENT
-RUN npm install -g pnpm@8.14.1
 COPY package.json pnpm-lock.yaml ./
 COPY environments/${ENVIRONMENT}.env .env
-RUN pnpm install
 ADD . .
+
+FROM base AS prod-deps
+RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm install --prod --frozen-lockfile
+
+FROM base AS build
+RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm install --frozen-lockfile
 RUN pnpm run build
 
-FROM public.ecr.aws/docker/library/node:20-alpine AS production
+FROM base
 WORKDIR /usr/src/app
-COPY --from=0 /usr/src/app/node_modules/ ./node_modules/
-RUN npm install -g pnpm@8.14.1
-COPY package.json pnpm-lock.yaml ./
-RUN pnpm install
-COPY --from=development /usr/src/app/dist ./dist
+COPY --from=prod-deps /usr/src/app/node_modules/ ./node_modules
+COPY --from=build /usr/src/app/dist ./dist
 EXPOSE 3001
-CMD ["node", "/usr/src/app/dist/main"]
+CMD [ "node", "/usr/src/app/dist/main" ]
