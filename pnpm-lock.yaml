@@ -15,8 +15,8 @@ importers:
         specifier: 3.554.0
         version: 3.554.0
       '@harrylowkey/code2image':
-        specifier: 0.0.26
-        version: 0.0.26(typescript@4.9.5)
+        specifier: 0.0.27
+        version: 0.0.27(typescript@4.9.5)
       '@nestjs/axios':
         specifier: 3.0.2
         version: 3.0.2(@nestjs/common@10.3.7(reflect-metadata@0.2.2)(rxjs@7.8.1))(axios@1.6.8)(rxjs@7.8.1)
@@ -625,8 +625,8 @@ packages:
     resolution: {integrity: sha512-gMsVel9D7f2HLkBma9VbtzZRehRogVRfbr++f06nL2vnCGCNlzOD+/MUov/F4p8myyAHspEhVobgjpX64q5m6A==}
     engines: {node: ^12.22.0 || ^14.17.0 || >=16.0.0}
 
-  '@harrylowkey/code2image@0.0.26':
-    resolution: {integrity: sha512-RtoXjUrqsTcvoAsBSPX3vdCdSUdkVHZF7MH1DFJXngwJNzAVEPu6e+kZ81uc/kNRfJIrgjjMsfGF3gTVzpYpeg==}
+  '@harrylowkey/code2image@0.0.27':
+    resolution: {integrity: sha512-OPggCqtwapAbWfYqzbmjLZcbj07nZZm3ERtTYhYfYnNpa7lWsi7TJVc05JYTOivqhtbrntEvb6o2pk1MceFB+w==}
 
   '@humanwhocodes/config-array@0.11.14':
     resolution: {integrity: sha512-3T8LkOmg45BV5FICb15QQMsyUSWrQ8AygVfC7ZG32zOalnqrilm018ZVCw0eapXux8FtA33q8PSRSstjee3jSg==}
@@ -4885,7 +4885,7 @@ snapshots:
 
   '@eslint/js@8.56.0': {}
 
-  '@harrylowkey/code2image@0.0.26(typescript@4.9.5)':
+  '@harrylowkey/code2image@0.0.27(typescript@4.9.5)':
     dependencies:
       chrome-aws-lambda: 10.1.0(puppeteer-core@10.4.0)
       puppeteer: 22.6.5(typescript@4.9.5)
