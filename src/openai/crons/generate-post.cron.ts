@@ -14,7 +14,7 @@ export class GeneratePostCronService {
         private previewPostService: PreviewPostService
     ) {}
 
-    @Cron('0 9,15,20 * * *') // at  9 am, 3 pm, and 8 pm every day,
+    @Cron('0 2,8,13 * * *') // at  9 am, 3 pm, and 8 pm every day in Vietnam timezone (UTC+7)
     async generatePost(): Promise<void> {
         const { mediaUrls, caption } = await this.openAIPostService.preparePost();
         await this.uploadPostService.upload(mediaUrls, caption);
